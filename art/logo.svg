@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 250 72" fill="none">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Figtree:wght@700&amp;display=swap');
+    </style>
+  </defs>
+  <rect width="250" height="72" rx="16" fill="#060B18"/>
+  <text x="125" y="48" font-family="Figtree, sans-serif" font-size="38" font-weight="700" text-anchor="middle">
+    <tspan fill="#FF2D20">lara</tspan><tspan fill="#ffffff">.svg</tspan>
+  </text>
+</svg>
