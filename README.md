@@ -1,3 +1,7 @@
+<p align="center">
+    <img src="art/logo.png" alt="LaraSVG Logo" width="300">
+</p>
+
 # LaraSVG
 
 A modern Laravel package for SVG conversion with multiple provider support. Convert SVG files to PNG, PDF, EPS, and more using a fluent API and Laravel's Process facade.
