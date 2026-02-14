@@ -29,7 +29,7 @@ abstract class AbstractConverter implements Provider
     protected ?string $exportFilename = null;
 
     /**
-     * Whether the format was inferred from export name.
+     * Whether the format was inferred from the export name.
      */
     protected bool $formatFromExport = false;
 
@@ -155,9 +155,9 @@ abstract class AbstractConverter implements Provider
     public function withOptions(array $options): static
     {
         foreach ($options as $key => $value) {
-            if (is_int($key)) {
+            if (is_int($key) && is_string($value)) {
                 $this->withFlag($value);
-            } else {
+            } elseif (is_string($key)) {
                 $this->withOption($key, $value);
             }
         }
@@ -211,7 +211,13 @@ abstract class AbstractConverter implements Provider
             throw new SvgConverterException("{$this->providerName()} did not produce the expected output file: {$tempOutput}");
         }
 
-        Storage::disk($disk)->put($path, file_get_contents($tempOutput));
+        $contents = file_get_contents($tempOutput);
+
+        if ($contents === false) {
+            throw new SvgConverterException("Failed to read converted file: {$tempOutput}");
+        }
+
+        Storage::disk($disk)->put($path, $contents);
 
         return $path;
     }
@@ -344,7 +350,7 @@ abstract class AbstractConverter implements Provider
     }
 
     /**
-     * Prepare the export format. If not set, infer from export name.
+     * Prepare the export format. If not set, infer from the export name.
      */
     protected function prepareExportFormat(?string $exportName): void
     {

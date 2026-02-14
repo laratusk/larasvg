@@ -112,7 +112,7 @@ class StdoutTest extends TestCase
 
         $this->assertStringContainsString('FAKE_PNG_BINARY_DATA', $output);
 
-        Process::assertRan(fn ($process): bool => str_contains((string) $process->command, '--c'));
+        Process::assertRan(fn ($process): bool => str_contains((string) $process->command, '-c'));
     }
 
     #[Test]
@@ -135,7 +135,7 @@ class StdoutTest extends TestCase
 
         Process::assertRan(fn ($process): bool => str_contains((string) $process->command, '--width 256')
             && str_contains((string) $process->command, '--height 256')
-            && str_contains((string) $process->command, '--c'));
+            && str_contains((string) $process->command, '-c'));
     }
 
     // -------------------------------------------------------------------------

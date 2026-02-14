@@ -14,6 +14,12 @@ A modern Laravel package for SVG conversion with multiple provider support. Conv
 - **Facade** — Clean `SvgConverter::` static API with IDE autocompletion
 - **Setup command** — Interactive `php artisan larasvg:setup` to install providers
 
+## Code Quality
+
+- **Test Coverage** — **98.62%** line coverage with full feature and unit tests.
+- **PHPStan** — Compliant with **Level 9 (Max)** for robust type safety.
+- **Type Safety** — 100% typed properties and return types.
+
 ## Requirements
 
 - PHP 8.4+

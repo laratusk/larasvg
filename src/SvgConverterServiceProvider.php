@@ -2,6 +2,7 @@
 
 namespace Laratusk\Larasvg;
 
+use Illuminate\Contracts\Foundation\Application;
 use Laratusk\Larasvg\Commands\SetupCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
@@ -18,6 +19,6 @@ class SvgConverterServiceProvider extends PackageServiceProvider
 
     public function packageRegistered(): void
     {
-        $this->app->singleton(SvgConverterManager::class, fn ($app): \Laratusk\Larasvg\SvgConverterManager => new SvgConverterManager($app));
+        $this->app->singleton(SvgConverterManager::class, fn (Application $app): SvgConverterManager => new SvgConverterManager($app));
     }
 }

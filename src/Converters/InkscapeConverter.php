@@ -55,7 +55,9 @@ class InkscapeConverter extends AbstractConverter
                 $value === null => "--{$option}",
                 is_bool($value) => "--{$option}=".($value ? 'true' : 'false'),
                 is_numeric($value) => "--{$option}={$value}",
-                default => "--{$option}=".escapeshellarg((string) $value),
+                is_string($value) => "--{$option}=".escapeshellarg($value),
+                is_scalar($value) => "--{$option}=".escapeshellarg($value),
+                default => "--{$option}",
             };
         }
 

@@ -2,12 +2,19 @@
 
 namespace Laratusk\Larasvg\Tests;
 
+use Dotenv\Dotenv;
 use Laratusk\Larasvg\Facades\SvgConverter;
 use Laratusk\Larasvg\SvgConverterServiceProvider;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 abstract class TestCase extends OrchestraTestCase
 {
+    protected function setUp(): void
+    {
+        $this->loadEnvFile();
+        parent::setUp();
+    }
+
     protected function getPackageProviders($app): array
     {
         return [
@@ -25,9 +32,9 @@ abstract class TestCase extends OrchestraTestCase
     protected function defineEnvironment($app): void
     {
         $app['config']->set('svg-converter.default', 'resvg');
-        $app['config']->set('svg-converter.providers.resvg.binary', '/usr/local/bin/resvg');
+        $app['config']->set('svg-converter.providers.resvg.binary', env('RESVG_PATH', 'resvg'));
         $app['config']->set('svg-converter.providers.resvg.timeout', 60);
-        $app['config']->set('svg-converter.providers.inkscape.binary', '/usr/local/bin/inkscape');
+        $app['config']->set('svg-converter.providers.inkscape.binary', env('INKSCAPE_PATH', 'inkscape'));
         $app['config']->set('svg-converter.providers.inkscape.timeout', 60);
         $app['config']->set('svg-converter.default_disk', 'local');
     }
@@ -42,5 +49,14 @@ abstract class TestCase extends OrchestraTestCase
         file_put_contents($path, $content);
 
         return $path;
+    }
+
+    private function loadEnvFile(): void
+    {
+        $envPath = dirname(__DIR__);
+
+        if (file_exists($envPath.'/.env')) {
+            Dotenv::createImmutable($envPath)->safeLoad();
+        }
     }
 }

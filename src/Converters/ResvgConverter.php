@@ -40,17 +40,33 @@ class ResvgConverter extends AbstractConverter
     public function buildCommand(): string
     {
         $parts = [escapeshellarg($this->binary)];
+        $postInputFlags = [];
 
         foreach ($this->options as $option => $value) {
-            $parts[] = match (true) {
-                $value === null => "--{$option}",
-                is_bool($value) => "--{$option}=".($value ? 'true' : 'false'),
-                is_numeric($value) => "--{$option} {$value}",
-                default => "--{$option} ".escapeshellarg((string) $value),
+            $prefix = strlen($option) === 1 ? '-' : '--';
+            $rendered = match (true) {
+                $value === null => "{$prefix}{$option}",
+                is_bool($value) => "{$prefix}{$option}=".($value ? 'true' : 'false'),
+                is_numeric($value) => "{$prefix}{$option} {$value}",
+                is_string($value) => "{$prefix}{$option} ".escapeshellarg($value),
+                is_scalar($value) => "{$prefix}{$option} ".escapeshellarg($value),
+                default => "{$prefix}{$option}",
             };
+
+            // Single-char flags (like -c for stdout) must come after input
+            if (strlen($option) === 1 && $value === null) {
+                $postInputFlags[] = $rendered;
+            } else {
+                $parts[] = $rendered;
+            }
         }
 
         $parts[] = escapeshellarg($this->inputPath);
+
+        // Append post-input flags (e.g. -c for stdout)
+        foreach ($postInputFlags as $flag) {
+            $parts[] = $flag;
+        }
 
         if ($this->outputPath !== null && $this->outputPath !== '-') {
             $parts[] = escapeshellarg($this->outputPath);

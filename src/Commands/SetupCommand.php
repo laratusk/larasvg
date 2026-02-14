@@ -70,6 +70,18 @@ class SetupCommand extends Command
     }
 
     /**
+     * @param array<int, string> $disabledOptions
+     */
+    public function validateProvider(string $value, array $disabledOptions): ?string
+    {
+        if (in_array($value, $disabledOptions, true)) {
+            return ucfirst($value).' is already installed.';
+        }
+
+        return null;
+    }
+
+    /**
      * @return array<string, mixed>|null
      */
     private function detectProviders(): ?array
@@ -97,10 +109,13 @@ class SetupCommand extends Command
 
         foreach (['inkscape', 'resvg'] as $name) {
             if (isset($status[$name]) && is_array($status[$name])) {
+                /** @var array{installed?: bool, version?: string, path?: string} $providerData */
+                $providerData = $status[$name];
+
                 $this->providers[$name] = [
-                    'installed' => (bool) ($status[$name]['installed'] ?? false),
-                    'version' => (string) ($status[$name]['version'] ?? ''),
-                    'path' => (string) ($status[$name]['path'] ?? ''),
+                    'installed' => (bool) ($providerData['installed'] ?? false),
+                    'version' => (string) ($providerData['version'] ?? ''),
+                    'path' => (string) ($providerData['path'] ?? ''),
                 ];
             }
         }
@@ -113,8 +128,8 @@ class SetupCommand extends Command
      */
     private function displaySystemInfo(array $status): void
     {
-        $os = (string) ($status['os'] ?? 'unknown');
-        $distro = (string) ($status['distro'] ?? 'unknown');
+        $os = isset($status['os']) && is_string($status['os']) ? $status['os'] : 'unknown';
+        $distro = isset($status['distro']) && is_string($status['distro']) ? $status['distro'] : 'unknown';
 
         note("System: {$os} ({$distro})");
         $this->newLine();
@@ -175,13 +190,7 @@ class SetupCommand extends Command
             label: 'Which provider would you like to install?',
             options: $options,
             default: $default,
-            validate: function (string $value) use ($disabledOptions): ?string {
-                if (in_array($value, $disabledOptions, true)) {
-                    return ucfirst($value).' is already installed.';
-                }
-
-                return null;
-            },
+            validate: fn (string $value): ?string => $this->validateProvider($value, $disabledOptions),
             hint: 'Installed providers cannot be selected.',
         );
 
@@ -193,7 +202,7 @@ class SetupCommand extends Command
             return null;
         }
 
-        return $selected;
+        return (string) $selected;
     }
 
     private function installProvider(string $provider): int

@@ -2,6 +2,7 @@
 
 namespace Laratusk\Larasvg\Tests\Unit;
 
+use Illuminate\Support\Facades\Process;
 use Laratusk\Larasvg\Converters\ResvgConverter;
 use Laratusk\Larasvg\Exceptions\SvgConverterException;
 use Laratusk\Larasvg\Tests\TestCase;
@@ -230,5 +231,79 @@ class ResvgConverterTest extends TestCase
         $this->assertEquals(2.0, $result->options['zoom']);
         $this->assertEquals('crispEdges', $result->options['shape-rendering']);
         $this->assertEquals('Arial', $result->options['font-family']);
+    }
+
+    #[Test]
+    public function it_returns_version_string(): void
+    {
+        Process::fake([
+            '*' => Process::result(output: 'resvg 0.44.0', exitCode: 0),
+        ]);
+
+        $converter = new ResvgConverter($this->testSvg, '/usr/bin/resvg', 60);
+        $version = $converter->version();
+
+        $this->assertEquals('resvg 0.44.0', $version);
+    }
+
+    #[Test]
+    public function it_throws_when_version_fails(): void
+    {
+        Process::fake([
+            '*' => Process::result(output: '', errorOutput: 'command not found', exitCode: 127),
+        ]);
+
+        $this->expectException(SvgConverterException::class);
+        $this->expectExceptionMessage('command not found');
+
+        $converter = new ResvgConverter($this->testSvg, '/usr/bin/resvg', 60);
+        $converter->version();
+    }
+
+    #[Test]
+    public function it_builds_command_with_boolean_false(): void
+    {
+        $converter = new ResvgConverter($this->testSvg, 'resvg', 60);
+        $converter->withOption('some-option', false);
+
+        $command = $converter->buildCommand();
+        $this->assertStringContainsString('--some-option=false', $command);
+    }
+
+    #[Test]
+    public function it_builds_command_with_single_char_flag(): void
+    {
+        $converter = new ResvgConverter($this->testSvg, 'resvg', 60);
+        $converter->withFlag('c'); // Single char flag (like -c for stdout)
+
+        $command = $converter->buildCommand();
+        $this->assertStringContainsString('-c', $command);
+        // Ensure flag is AFTER input path (Resvg requirement for -c)
+        $inputPos = strpos($command, $this->testSvg);
+        $flagPos = strpos($command, '-c');
+        $this->assertGreaterThan($inputPos, $flagPos);
+    }
+
+    #[Test]
+    public function it_builds_command_with_output_path(): void
+    {
+        $converter = new ResvgConverter($this->testSvg, 'resvg', 60);
+        // Use reflection to set outputPath protected property
+        $reflection = new \ReflectionProperty($converter, 'outputPath');
+        $reflection->setValue($converter, '/tmp/output.png');
+
+        $command = $converter->buildCommand();
+        $this->assertStringContainsString("'/tmp/output.png'", $command);
+    }
+
+    #[Test]
+    public function it_builds_command_with_default_non_scalar_value(): void
+    {
+        $converter = new ResvgConverter($this->testSvg, 'resvg', 60);
+        // Use withOption public method instead of reflection
+        $converter->withOption('array-option', ['not', 'scalar']);
+
+        $command = $converter->buildCommand();
+        $this->assertStringContainsString('--array-option', $command);
     }
 }

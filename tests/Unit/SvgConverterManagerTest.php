@@ -2,6 +2,7 @@
 
 namespace Laratusk\Larasvg\Tests\Unit;
 
+use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
 use Laratusk\Larasvg\Contracts\Provider;
 use Laratusk\Larasvg\Converters\InkscapeConverter;
@@ -72,7 +73,8 @@ class SvgConverterManagerTest extends TestCase
     {
         $converter = $this->manager->open($this->testSvg);
 
-        $this->assertEquals('/usr/local/bin/resvg', $converter->binary);
+        $expectedBinary = $this->app['config']->get('svg-converter.providers.resvg.binary');
+        $this->assertEquals($expectedBinary, $converter->binary);
         $this->assertEquals(60, $converter->timeout);
     }
 
@@ -81,15 +83,19 @@ class SvgConverterManagerTest extends TestCase
     {
         $converter = $this->manager->using('inkscape')->open($this->testSvg);
 
-        $this->assertEquals('/usr/local/bin/inkscape', $converter->binary);
+        $expectedBinary = $this->app['config']->get('svg-converter.providers.inkscape.binary');
+        $this->assertEquals($expectedBinary, $converter->binary);
         $this->assertEquals(60, $converter->timeout);
     }
 
     #[Test]
     public function it_reads_config_values(): void
     {
-        $this->assertEquals('/usr/local/bin/resvg', $this->manager->getBinary('resvg'));
-        $this->assertEquals('/usr/local/bin/inkscape', $this->manager->getBinary('inkscape'));
+        $expectedResvg = $this->app['config']->get('svg-converter.providers.resvg.binary');
+        $expectedInkscape = $this->app['config']->get('svg-converter.providers.inkscape.binary');
+
+        $this->assertEquals($expectedResvg, $this->manager->getBinary('resvg'));
+        $this->assertEquals($expectedInkscape, $this->manager->getBinary('inkscape'));
         $this->assertEquals(60, $this->manager->getTimeout('resvg'));
         $this->assertEquals(60, $this->manager->getTimeout('inkscape'));
         $this->assertEquals('local', $this->manager->getDefaultDisk());
@@ -171,5 +177,26 @@ class SvgConverterManagerTest extends TestCase
         $converter = $this->manager->using('inkscape')->openFromDisk('test-disk', 'test.svg');
 
         $this->assertInstanceOf(InkscapeConverter::class, $converter);
+    }
+
+    #[Test]
+    public function it_returns_action_list_from_inkscape(): void
+    {
+        Process::fake([
+            '*' => Process::result(output: 'action-list', exitCode: 0),
+        ]);
+
+        $result = $this->manager->using('inkscape')->actionList();
+        $this->assertEquals('action-list', $result);
+    }
+
+    #[Test]
+    public function it_throws_action_list_for_non_inkscape(): void
+    {
+        $this->expectException(SvgConverterException::class);
+        $this->expectExceptionMessage('actionList() is only available for the Inkscape provider.');
+
+        // Default is resvg
+        $this->manager->actionList();
     }
 }

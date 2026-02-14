@@ -1,0 +1,10 @@
+# Exclude development files from release archive
+/.github/ export-ignore
+/.env.example export-ignore
+/.gitattributes export-ignore
+/.gitignore export-ignore
+/phpstan.neon export-ignore
+/phpunit.xml export-ignore
+/pint.json export-ignore
+/rector.php export-ignore
+/tests/ export-ignore

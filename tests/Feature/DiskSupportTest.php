@@ -63,7 +63,8 @@ class DiskSupportTest extends TestCase
 
         $command = $converter->buildCommand();
 
-        $this->assertStringContainsString("'/usr/local/bin/inkscape'", $command);
+        $expectedBinary = $this->app['config']->get('svg-converter.providers.inkscape.binary');
+        $this->assertStringContainsString("'{$expectedBinary}'", $command);
         $this->assertStringContainsString('.svg', $command);
     }
 
