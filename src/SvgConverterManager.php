@@ -140,7 +140,12 @@ class SvgConverterManager
     {
         $provider ??= $this->resolveProviderName();
 
-        return $this->app['config']->get("svg-converter.providers.{$provider}.binary", $provider);
+        /** @var \Illuminate\Config\Repository $config */
+        $config = $this->app->make('config');
+
+        $binary = $config->get("svg-converter.providers.{$provider}.binary", $provider);
+
+        return is_string($binary) ? $binary : $provider;
     }
 
     /**
@@ -150,7 +155,12 @@ class SvgConverterManager
     {
         $provider ??= $this->resolveProviderName();
 
-        return (int) $this->app['config']->get("svg-converter.providers.{$provider}.timeout", 60);
+        /** @var \Illuminate\Config\Repository $config */
+        $config = $this->app->make('config');
+
+        $timeout = $config->get("svg-converter.providers.{$provider}.timeout", 60);
+
+        return is_int($timeout) ? $timeout : 60;
     }
 
     /**
@@ -158,7 +168,12 @@ class SvgConverterManager
      */
     public function getDefaultDisk(): string
     {
-        return $this->app['config']->get('svg-converter.default_disk', 'local');
+        /** @var \Illuminate\Config\Repository $config */
+        $config = $this->app->make('config');
+
+        $disk = $config->get('svg-converter.default_disk', 'local');
+
+        return is_string($disk) ? $disk : 'local';
     }
 
     /**
@@ -166,7 +181,11 @@ class SvgConverterManager
      */
     protected function resolveProviderName(): string
     {
-        $provider = $this->provider ?? $this->app['config']->get('svg-converter.default', 'resvg');
+        /** @var \Illuminate\Config\Repository $config */
+        $config = $this->app->make('config');
+
+        $default = $config->get('svg-converter.default', 'resvg');
+        $provider = $this->provider ?? (is_string($default) ? $default : 'resvg');
 
         // Reset for next call
         $this->provider = null;

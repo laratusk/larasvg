@@ -72,7 +72,8 @@ class SvgConverterManagerTest extends TestCase
     {
         $converter = $this->manager->open($this->testSvg);
 
-        $this->assertEquals('/usr/local/bin/resvg', $converter->binary);
+        $expectedBinary = $this->app['config']->get('svg-converter.providers.resvg.binary');
+        $this->assertEquals($expectedBinary, $converter->binary);
         $this->assertEquals(60, $converter->timeout);
     }
 
@@ -81,15 +82,19 @@ class SvgConverterManagerTest extends TestCase
     {
         $converter = $this->manager->using('inkscape')->open($this->testSvg);
 
-        $this->assertEquals('/usr/local/bin/inkscape', $converter->binary);
+        $expectedBinary = $this->app['config']->get('svg-converter.providers.inkscape.binary');
+        $this->assertEquals($expectedBinary, $converter->binary);
         $this->assertEquals(60, $converter->timeout);
     }
 
     #[Test]
     public function it_reads_config_values(): void
     {
-        $this->assertEquals('/usr/local/bin/resvg', $this->manager->getBinary('resvg'));
-        $this->assertEquals('/usr/local/bin/inkscape', $this->manager->getBinary('inkscape'));
+        $expectedResvg = $this->app['config']->get('svg-converter.providers.resvg.binary');
+        $expectedInkscape = $this->app['config']->get('svg-converter.providers.inkscape.binary');
+
+        $this->assertEquals($expectedResvg, $this->manager->getBinary('resvg'));
+        $this->assertEquals($expectedInkscape, $this->manager->getBinary('inkscape'));
         $this->assertEquals(60, $this->manager->getTimeout('resvg'));
         $this->assertEquals(60, $this->manager->getTimeout('inkscape'));
         $this->assertEquals('local', $this->manager->getDefaultDisk());

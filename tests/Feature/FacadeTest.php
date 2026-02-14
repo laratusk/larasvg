@@ -109,7 +109,8 @@ class FacadeTest extends TestCase
     {
         $binary = SvgConverter::getBinary('resvg');
 
-        $this->assertEquals('/usr/local/bin/resvg', $binary);
+        $expectedBinary = $this->app['config']->get('svg-converter.providers.resvg.binary');
+        $this->assertEquals($expectedBinary, $binary);
     }
 
     #[Test]

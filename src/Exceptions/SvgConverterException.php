@@ -33,7 +33,7 @@ class SvgConverterException extends RuntimeException
             message: $message,
             output: $result->output(),
             errorOutput: $result->errorOutput(),
-            exitCode: $result->exitCode(),
+            exitCode: $result->exitCode() ?? 1,
         );
     }
 

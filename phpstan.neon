@@ -5,6 +5,6 @@ parameters:
     paths:
         - src/
 
-    level: 6
+    level: max
 
     tmpDir: .phpstan.cache

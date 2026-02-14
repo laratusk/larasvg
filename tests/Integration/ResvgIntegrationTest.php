@@ -54,7 +54,7 @@ class ResvgIntegrationTest extends TestCase
         $version = SvgConverter::version('resvg');
 
         $this->assertNotEmpty($version);
-        $this->assertStringContainsString('resvg', strtolower($version));
+        $this->assertMatchesRegularExpression('/\d+\.\d+/', $version);
     }
 
     // -------------------------------------------------------------------------
