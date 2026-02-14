@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [main]
 
+env:
+  COMPOSER_CACHE_DIR: ${{ github.workspace }}/.composer-cache
+
 jobs:
   pint:
     name: Pint (Code Style)
@@ -19,6 +22,13 @@ jobs:
         with:
           php-version: '8.4'
           coverage: none
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.COMPOSER_CACHE_DIR }}
+          key: composer-${{ hashFiles('composer.json') }}
+          restore-keys: composer-
 
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
@@ -39,6 +49,13 @@ jobs:
           php-version: '8.4'
           coverage: none
 
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.COMPOSER_CACHE_DIR }}
+          key: composer-${{ hashFiles('composer.json') }}
+          restore-keys: composer-
+
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
 
@@ -57,6 +74,20 @@ jobs:
         with:
           php-version: '8.4'
           coverage: none
+
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.COMPOSER_CACHE_DIR }}
+          key: composer-${{ hashFiles('composer.json') }}
+          restore-keys: composer-
+
+      - name: Cache PHPStan results
+        uses: actions/cache@v4
+        with:
+          path: .phpstan.cache
+          key: phpstan-${{ hashFiles('src/**/*.php', 'phpstan.neon') }}
+          restore-keys: phpstan-
 
       - name: Install dependencies
         run: composer install --no-interaction --prefer-dist
@@ -87,6 +118,16 @@ jobs:
           extensions: dom, curl, libxml, mbstring, zip
           coverage: none
 
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.COMPOSER_CACHE_DIR }}
+          key: composer-php${{ matrix.php }}-laravel${{ matrix.laravel }}-${{ hashFiles('composer.json') }}
+          restore-keys: |
+            composer-php${{ matrix.php }}-laravel${{ matrix.laravel }}-
+            composer-php${{ matrix.php }}-
+            composer-
+
       - name: Install dependencies
         run: |
           composer require "illuminate/contracts:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
@@ -113,11 +154,28 @@ jobs:
           extensions: dom, curl, libxml, mbstring, zip
           coverage: none
 
+      - name: Cache Composer dependencies
+        uses: actions/cache@v4
+        with:
+          path: ${{ env.COMPOSER_CACHE_DIR }}
+          key: composer-${{ hashFiles('composer.json') }}
+          restore-keys: composer-
+
+      - name: Cache Cargo registry and build
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/registry
+            ~/.cargo/git
+            ~/.cargo/bin
+          key: cargo-resvg-${{ runner.os }}
+          restore-keys: cargo-resvg-
+
       - name: Install system dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y inkscape
-          cargo install resvg || true
+          command -v resvg || cargo install resvg
 
       - name: Install Composer dependencies
         run: composer install --no-interaction --prefer-dist
