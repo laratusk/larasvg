@@ -1,0 +1,45 @@
+{
+    "preset": "laravel",
+    "rules": {
+        "concat_space": {
+            "spacing": "none"
+        },
+        "not_operator_with_successor_space": true,
+        "type_declaration_spaces": true,
+        "single_trait_insert_per_statement": true,
+        "ordered_class_elements": {
+            "order": [
+                "use_trait",
+                "case",
+                "constant_public",
+                "constant_protected",
+                "constant_private",
+                "property_public",
+                "property_protected",
+                "property_private",
+                "construct",
+                "destruct",
+                "magic",
+                "phpunit",
+                "method_public_abstract",
+                "method_protected_abstract",
+                "method_public_static",
+                "method_protected_static",
+                "method_private_static",
+                "method_public",
+                "method_protected",
+                "method_private"
+            ]
+        },
+        "phpdoc_order": true,
+        "phpdoc_separation": true,
+        "phpdoc_align": {
+            "align": "vertical"
+        }
+    },
+    "exclude": [
+        "vendor",
+        "node_modules",
+        ".phpunit.cache"
+    ]
+}

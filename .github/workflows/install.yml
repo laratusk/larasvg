@@ -1,0 +1,277 @@
+name: Install Script
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'bin/install.sh'
+      - '.github/workflows/install.yml'
+  pull_request:
+    branches: [main]
+    paths:
+      - 'bin/install.sh'
+      - '.github/workflows/install.yml'
+  workflow_dispatch:
+
+jobs:
+  # ---------------------------------------------------------------------------
+  #  --check (detection only, all OS)
+  # ---------------------------------------------------------------------------
+  check-ubuntu:
+    name: Detect — Ubuntu
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Run --check
+        run: |
+          chmod +x bin/install.sh
+          bin/install.sh --check
+      - name: Run status display
+        run: bin/install.sh
+
+  check-macos:
+    name: Detect — macOS
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Run --check
+        run: |
+          chmod +x bin/install.sh
+          bin/install.sh --check
+      - name: Run status display
+        run: bin/install.sh
+
+  # ---------------------------------------------------------------------------
+  #  Inkscape install
+  # ---------------------------------------------------------------------------
+  inkscape-ubuntu:
+    name: Inkscape — Ubuntu
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Verify not installed
+        run: |
+          chmod +x bin/install.sh
+          ! command -v inkscape
+      - name: Install Inkscape
+        run: bin/install.sh inkscape
+      - name: Verify installed
+        run: |
+          command -v inkscape
+          inkscape --version
+      - name: Verify --check detects it
+        run: |
+          bin/install.sh --check | grep '"installed": true'
+      - name: Re-run is idempotent
+        run: bin/install.sh inkscape
+
+  inkscape-macos:
+    name: Inkscape — macOS
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install Inkscape
+        run: |
+          chmod +x bin/install.sh
+          bin/install.sh inkscape
+      - name: Verify installed
+        run: |
+          command -v inkscape
+          inkscape --version
+      - name: Verify --check detects it
+        run: |
+          bin/install.sh --check | grep '"installed": true'
+
+  inkscape-fedora:
+    name: Inkscape — Fedora
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install base tools
+        run: dnf install -y bash which sudo
+      - name: Verify not installed
+        run: |
+          chmod +x bin/install.sh
+          ! command -v inkscape
+      - name: Install Inkscape
+        run: bin/install.sh inkscape
+      - name: Verify installed
+        run: |
+          command -v inkscape
+          inkscape --version
+      - name: Verify --check detects it
+        run: |
+          bin/install.sh --check | grep '"installed": true'
+
+  inkscape-arch:
+    name: Inkscape — Arch
+    runs-on: ubuntu-latest
+    container:
+      image: archlinux:latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install base tools
+        run: pacman -Sy --noconfirm bash which sudo
+      - name: Verify not installed
+        run: |
+          chmod +x bin/install.sh
+          ! command -v inkscape
+      - name: Install Inkscape
+        run: bin/install.sh inkscape
+      - name: Verify installed
+        run: |
+          command -v inkscape
+          inkscape --version
+      - name: Verify --check detects it
+        run: |
+          bin/install.sh --check | grep '"installed": true'
+
+  inkscape-alpine:
+    name: Inkscape — Alpine
+    runs-on: ubuntu-latest
+    container:
+      image: alpine:latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install base tools
+        run: apk add --no-cache bash sudo
+      - name: Verify not installed
+        run: |
+          chmod +x bin/install.sh
+          ! command -v inkscape
+      - name: Install Inkscape
+        run: bin/install.sh inkscape
+      - name: Verify installed
+        run: |
+          command -v inkscape
+          inkscape --version
+      - name: Verify --check detects it
+        run: |
+          bin/install.sh --check | grep '"installed": true'
+
+  # ---------------------------------------------------------------------------
+  #  Resvg install
+  # ---------------------------------------------------------------------------
+  resvg-ubuntu:
+    name: Resvg — Ubuntu
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Verify not installed
+        run: |
+          chmod +x bin/install.sh
+          ! command -v resvg
+      - name: Install Resvg
+        run: bin/install.sh resvg
+      - name: Add cargo to PATH
+        run: echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+      - name: Verify installed
+        run: |
+          command -v resvg
+          resvg --version
+      - name: Verify --check detects it
+        run: |
+          bin/install.sh --check | grep '"installed": true'
+      - name: Re-run is idempotent
+        run: bin/install.sh resvg
+
+  resvg-macos:
+    name: Resvg — macOS
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install Resvg
+        run: |
+          chmod +x bin/install.sh
+          bin/install.sh resvg
+      - name: Verify installed
+        run: |
+          command -v resvg
+          resvg --version
+      - name: Verify --check detects it
+        run: |
+          bin/install.sh --check | grep '"installed": true'
+
+  resvg-fedora:
+    name: Resvg — Fedora
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Install base tools
+        run: dnf install -y bash which sudo curl gcc
+      - name: Verify not installed
+        run: |
+          chmod +x bin/install.sh
+          ! command -v resvg
+      - name: Install Resvg
+        run: bin/install.sh resvg
+      - name: Add cargo to PATH
+        run: echo "$HOME/.cargo/bin" >> $GITHUB_PATH
+      - name: Verify installed
+        run: |
+          source "$HOME/.cargo/env"
+          command -v resvg
+          resvg --version
+      - name: Verify --check detects it
+        run: |
+          source "$HOME/.cargo/env"
+          bin/install.sh --check | grep '"installed": true'
+
+  # ---------------------------------------------------------------------------
+  #  Summary
+  # ---------------------------------------------------------------------------
+  install-results:
+    name: Install Results
+    runs-on: ubuntu-latest
+    if: always()
+    needs:
+      - check-ubuntu
+      - check-macos
+      - inkscape-ubuntu
+      - inkscape-macos
+      - inkscape-fedora
+      - inkscape-arch
+      - inkscape-alpine
+      - resvg-ubuntu
+      - resvg-macos
+      - resvg-fedora
+    steps:
+      - name: Check results
+        run: |
+          echo "## Install Script Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Job | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Detect — Ubuntu | ${{ needs.check-ubuntu.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Detect — macOS | ${{ needs.check-macos.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Inkscape — Ubuntu | ${{ needs.inkscape-ubuntu.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Inkscape — macOS | ${{ needs.inkscape-macos.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Inkscape — Fedora | ${{ needs.inkscape-fedora.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Inkscape — Arch | ${{ needs.inkscape-arch.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Inkscape — Alpine | ${{ needs.inkscape-alpine.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Resvg — Ubuntu | ${{ needs.resvg-ubuntu.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Resvg — macOS | ${{ needs.resvg-macos.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Resvg — Fedora | ${{ needs.resvg-fedora.result }} |" >> $GITHUB_STEP_SUMMARY
+
+          # Fail if any job failed
+          if [[ "${{ needs.check-ubuntu.result }}" == "failure" ]] || \
+             [[ "${{ needs.check-macos.result }}" == "failure" ]] || \
+             [[ "${{ needs.inkscape-ubuntu.result }}" == "failure" ]] || \
+             [[ "${{ needs.inkscape-macos.result }}" == "failure" ]] || \
+             [[ "${{ needs.inkscape-fedora.result }}" == "failure" ]] || \
+             [[ "${{ needs.inkscape-arch.result }}" == "failure" ]] || \
+             [[ "${{ needs.inkscape-alpine.result }}" == "failure" ]] || \
+             [[ "${{ needs.resvg-ubuntu.result }}" == "failure" ]] || \
+             [[ "${{ needs.resvg-macos.result }}" == "failure" ]] || \
+             [[ "${{ needs.resvg-fedora.result }}" == "failure" ]]; then
+            echo ""
+            echo "One or more install tests failed!"
+            exit 1
+          fi
+
+          echo ""
+          echo "All install tests passed!"
