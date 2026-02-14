@@ -3,13 +3,14 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: 'LaraSVG',
   description: 'A modern Laravel package for SVG conversion with multiple provider support.',
+  base: '/larasvg/',
 
   head: [
-    ['link', { rel: 'icon', type: 'image/png', href: '/laratusk-512.png' }],
+    ['link', { rel: 'icon', type: 'image/png', href: '/larasvg/laratusk-512.png' }],
     ['meta', { property: 'og:type', content: 'website' }],
     ['meta', { property: 'og:title', content: 'LaraSVG' }],
     ['meta', { property: 'og:description', content: 'A modern Laravel package for SVG conversion with multiple provider support.' }],
-    ['meta', { property: 'og:image', content: '/banner.png' }],
+    ['meta', { property: 'og:image', content: '/larasvg/banner.png' }],
   ],
 
   themeConfig: {
