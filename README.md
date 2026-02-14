@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="art/logo.png" alt="LaraSVG Logo" width="300">
+    <img src="art/banner.png" alt="LaraSVG Logo">
 </p>
 
 # LaraSVG
