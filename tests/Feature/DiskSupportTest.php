@@ -18,7 +18,7 @@ class DiskSupportTest extends TestCase
     public function it_opens_from_disk_with_default_provider(): void
     {
         Storage::fake('s3');
-        Storage::disk('s3')->put('designs/logo.svg', '<svg xmlns="http://www.w3.org/2000/svg"><rect/></svg>');
+        Storage::disk('s3')->put('designs/logo.svg', '<svg xmlns="http://www.w3.org/2000/svg"><rect height="1" width="1"/></svg>');
 
         $converter = SvgConverter::openFromDisk('s3', 'designs/logo.svg');
 
@@ -32,7 +32,7 @@ class DiskSupportTest extends TestCase
     public function it_opens_from_disk_with_inkscape_provider(): void
     {
         Storage::fake('s3');
-        Storage::disk('s3')->put('designs/logo.svg', '<svg xmlns="http://www.w3.org/2000/svg"><rect/></svg>');
+        Storage::disk('s3')->put('designs/logo.svg', '<svg xmlns="http://www.w3.org/2000/svg"><rect height="1" width="1"/></svg>');
 
         $converter = SvgConverter::using('inkscape')->openFromDisk('s3', 'designs/logo.svg');
 
@@ -56,7 +56,7 @@ class DiskSupportTest extends TestCase
         Process::fake();
         Storage::fake('s3');
 
-        Storage::disk('s3')->put('designs/logo.svg', '<svg xmlns="http://www.w3.org/2000/svg"><rect/></svg>');
+        Storage::disk('s3')->put('designs/logo.svg', '<svg xmlns="http://www.w3.org/2000/svg"><rect height="1" width="1"/></svg>');
 
         $converter = SvgConverter::using('inkscape')->openFromDisk('s3', 'designs/logo.svg');
         $converter->setFormat('png')->setDimensions(512, 512);
