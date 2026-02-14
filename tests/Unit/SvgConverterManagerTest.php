@@ -2,6 +2,7 @@
 
 namespace Laratusk\Larasvg\Tests\Unit;
 
+use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
 use Laratusk\Larasvg\Contracts\Provider;
 use Laratusk\Larasvg\Converters\InkscapeConverter;
@@ -176,5 +177,26 @@ class SvgConverterManagerTest extends TestCase
         $converter = $this->manager->using('inkscape')->openFromDisk('test-disk', 'test.svg');
 
         $this->assertInstanceOf(InkscapeConverter::class, $converter);
+    }
+
+    #[Test]
+    public function it_returns_action_list_from_inkscape(): void
+    {
+        Process::fake([
+            '*' => Process::result(output: 'action-list', exitCode: 0),
+        ]);
+
+        $result = $this->manager->using('inkscape')->actionList();
+        $this->assertEquals('action-list', $result);
+    }
+
+    #[Test]
+    public function it_throws_action_list_for_non_inkscape(): void
+    {
+        $this->expectException(SvgConverterException::class);
+        $this->expectExceptionMessage('actionList() is only available for the Inkscape provider.');
+
+        // Default is resvg
+        $this->manager->actionList();
     }
 }

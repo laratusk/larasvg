@@ -12,11 +12,12 @@ class SetupCommandTest extends TestCase
     #[Test]
     public function it_validates_provider_selection(): void
     {
-        $command = new SetupCommand();
+        $command = new SetupCommand;
 
         $this->assertNull($command->validateProvider('resvg', []));
         $this->assertStringContainsString('already installed', $command->validateProvider('resvg', ['resvg']));
     }
+
     #[Test]
     public function it_detects_all_providers_installed_and_exits_successfully(): void
     {
@@ -94,8 +95,8 @@ class SetupCommandTest extends TestCase
             ->expectsQuestion('Which provider would you like to install?', 'inkscape')
             ->assertSuccessful();
 
-        Process::assertRan(fn($process): bool => str_contains((string) $process->command, 'inkscape')
-            && !str_contains((string) $process->command, '--check'));
+        Process::assertRan(fn ($process): bool => str_contains((string) $process->command, 'inkscape')
+            && ! str_contains((string) $process->command, '--check'));
     }
 
     #[Test]

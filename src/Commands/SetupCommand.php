@@ -70,6 +70,18 @@ class SetupCommand extends Command
     }
 
     /**
+     * @param array<int, string> $disabledOptions
+     */
+    public function validateProvider(string $value, array $disabledOptions): ?string
+    {
+        if (in_array($value, $disabledOptions, true)) {
+            return ucfirst($value).' is already installed.';
+        }
+
+        return null;
+    }
+
+    /**
      * @return array<string, mixed>|null
      */
     private function detectProviders(): ?array
@@ -178,13 +190,7 @@ class SetupCommand extends Command
             label: 'Which provider would you like to install?',
             options: $options,
             default: $default,
-            validate: function (string $value) use ($disabledOptions): ?string {
-                if (in_array($value, $disabledOptions, true)) {
-                    return ucfirst($value).' is already installed.';
-                }
-
-                return null;
-            },
+            validate: fn (string $value): ?string => $this->validateProvider($value, $disabledOptions),
             hint: 'Installed providers cannot be selected.',
         );
 
