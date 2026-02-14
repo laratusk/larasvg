@@ -13,3 +13,5 @@ coverage/
 *.swo
 .DS_Store
 Thumbs.db
+docs/.vitepress/cache/
+docs/.vitepress/dist/
