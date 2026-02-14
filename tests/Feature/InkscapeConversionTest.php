@@ -1,10 +1,10 @@
 <?php
 
-namespace Laratusk\SvgConverter\Tests\Feature;
+namespace Laratusk\Larasvg\Tests\Feature;
 
 use Illuminate\Support\Facades\Process;
-use Laratusk\SvgConverter\Converters\InkscapeConverter;
-use Laratusk\SvgConverter\Tests\TestCase;
+use Laratusk\Larasvg\Converters\InkscapeConverter;
+use Laratusk\Larasvg\Tests\TestCase;
 use PHPUnit\Framework\Attributes\Test;
 
 class InkscapeConversionTest extends TestCase

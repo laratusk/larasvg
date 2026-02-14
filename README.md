@@ -111,7 +111,7 @@ return [
 ### Basic Conversion (Resvg — default)
 
 ```php
-use Laratusk\SvgConverter\Facades\SvgConverter;
+use Laratusk\Larasvg\Facades\SvgConverter;
 
 // SVG to PNG
 SvgConverter::open('/path/to/file.svg')
@@ -260,7 +260,7 @@ $dimensions = $converter->query();
 All conversion errors throw `SvgConverterException`:
 
 ```php
-use Laratusk\SvgConverter\Exceptions\SvgConverterException;
+use Laratusk\Larasvg\Exceptions\SvgConverterException;
 
 try {
     SvgConverter::open('file.svg')->setFormat('png')->convert();

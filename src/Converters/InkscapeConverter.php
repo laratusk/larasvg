@@ -1,9 +1,9 @@
 <?php
 
-namespace Laratusk\SvgConverter\Converters;
+namespace Laratusk\Larasvg\Converters;
 
 use Illuminate\Support\Facades\Process;
-use Laratusk\SvgConverter\Exceptions\SvgConverterException;
+use Laratusk\Larasvg\Exceptions\SvgConverterException;
 
 class InkscapeConverter extends AbstractConverter
 {

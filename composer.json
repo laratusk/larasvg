@@ -31,21 +31,21 @@
     },
     "autoload": {
         "psr-4": {
-            "Laratusk\\SvgConverter\\": "src/"
+            "Laratusk\\Larasvg\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Laratusk\\SvgConverter\\Tests\\": "tests/"
+            "Laratusk\\Larasvg\\Tests\\": "tests/"
         }
     },
     "extra": {
         "laravel": {
             "providers": [
-                "Laratusk\\SvgConverter\\SvgConverterServiceProvider"
+                "Laratusk\\Larasvg\\SvgConverterServiceProvider"
             ],
             "aliases": {
-                "SvgConverter": "Laratusk\\SvgConverter\\Facades\\SvgConverter"
+                "SvgConverter": "Laratusk\\Larasvg\\Facades\\SvgConverter"
             }
         }
     },

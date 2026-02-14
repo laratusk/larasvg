@@ -1,6 +1,6 @@
 <?php
 
-namespace Laratusk\SvgConverter\Commands;
+namespace Laratusk\Larasvg\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Process;

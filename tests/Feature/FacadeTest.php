@@ -1,14 +1,14 @@
 <?php
 
-namespace Laratusk\SvgConverter\Tests\Feature;
+namespace Laratusk\Larasvg\Tests\Feature;
 
 use Illuminate\Support\Facades\Process;
-use Laratusk\SvgConverter\Contracts\Provider;
-use Laratusk\SvgConverter\Converters\InkscapeConverter;
-use Laratusk\SvgConverter\Converters\ResvgConverter;
-use Laratusk\SvgConverter\Facades\SvgConverter;
-use Laratusk\SvgConverter\SvgConverterManager;
-use Laratusk\SvgConverter\Tests\TestCase;
+use Laratusk\Larasvg\Contracts\Provider;
+use Laratusk\Larasvg\Converters\InkscapeConverter;
+use Laratusk\Larasvg\Converters\ResvgConverter;
+use Laratusk\Larasvg\Facades\SvgConverter;
+use Laratusk\Larasvg\SvgConverterManager;
+use Laratusk\Larasvg\Tests\TestCase;
 use PHPUnit\Framework\Attributes\Test;
 
 class FacadeTest extends TestCase

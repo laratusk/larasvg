@@ -1,11 +1,11 @@
 <?php
 
-namespace Laratusk\SvgConverter\Tests\Integration;
+namespace Laratusk\Larasvg\Tests\Integration;
 
 use Illuminate\Support\Facades\Storage;
-use Laratusk\SvgConverter\Exceptions\SvgConverterException;
-use Laratusk\SvgConverter\Facades\SvgConverter;
-use Laratusk\SvgConverter\Tests\TestCase;
+use Laratusk\Larasvg\Exceptions\SvgConverterException;
+use Laratusk\Larasvg\Facades\SvgConverter;
+use Laratusk\Larasvg\Tests\TestCase;
 use PHPUnit\Framework\Attributes\Test;
 
 /**

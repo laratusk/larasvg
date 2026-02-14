@@ -1,10 +1,10 @@
 <?php
 
-namespace Laratusk\SvgConverter\Facades;
+namespace Laratusk\Larasvg\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use Laratusk\SvgConverter\Contracts\Provider;
-use Laratusk\SvgConverter\SvgConverterManager;
+use Laratusk\Larasvg\Contracts\Provider;
+use Laratusk\Larasvg\SvgConverterManager;
 
 /**
  * @method static Provider            open(string $path)

@@ -1,12 +1,12 @@
 <?php
 
-namespace Laratusk\SvgConverter\Tests\Unit;
+namespace Laratusk\Larasvg\Tests\Unit;
 
 use Illuminate\Support\Facades\Process;
-use Laratusk\SvgConverter\Converters\InkscapeConverter;
-use Laratusk\SvgConverter\Converters\ResvgConverter;
-use Laratusk\SvgConverter\Exceptions\SvgConverterException;
-use Laratusk\SvgConverter\Tests\TestCase;
+use Laratusk\Larasvg\Converters\InkscapeConverter;
+use Laratusk\Larasvg\Converters\ResvgConverter;
+use Laratusk\Larasvg\Exceptions\SvgConverterException;
+use Laratusk\Larasvg\Tests\TestCase;
 use PHPUnit\Framework\Attributes\Test;
 
 class AbstractConverterTest extends TestCase

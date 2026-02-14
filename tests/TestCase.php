@@ -1,9 +1,9 @@
 <?php
 
-namespace Laratusk\SvgConverter\Tests;
+namespace Laratusk\Larasvg\Tests;
 
-use Laratusk\SvgConverter\Facades\SvgConverter;
-use Laratusk\SvgConverter\SvgConverterServiceProvider;
+use Laratusk\Larasvg\Facades\SvgConverter;
+use Laratusk\Larasvg\SvgConverterServiceProvider;
 use Orchestra\Testbench\TestCase as OrchestraTestCase;
 
 abstract class TestCase extends OrchestraTestCase

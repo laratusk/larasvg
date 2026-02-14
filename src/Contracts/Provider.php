@@ -1,6 +1,6 @@
 <?php
 
-namespace Laratusk\SvgConverter\Contracts;
+namespace Laratusk\Larasvg\Contracts;
 
 use Illuminate\Contracts\Process\ProcessResult;
 

@@ -90,7 +90,7 @@ Tests are organized into three suites:
 
 ### Writing Tests
 
-- Extend `Laratusk\SvgConverter\Tests\TestCase` for all tests
+- Extend `Laratusk\Larasvg\Tests\TestCase` for all tests
 - Use `Process::fake()` in unit and feature tests to avoid real process execution
 - Use the `#[Test]` attribute instead of `test_` method prefixes
 - Use `$this->createTempSvg()` helper from TestCase for temporary SVG files
@@ -101,9 +101,9 @@ Example:
 ```php
 <?php
 
-namespace Laratusk\SvgConverter\Tests\Unit;
+namespace Laratusk\Larasvg\Tests\Unit;
 
-use Laratusk\SvgConverter\Tests\TestCase;
+use Laratusk\Larasvg\Tests\TestCase;
 use PHPUnit\Framework\Attributes\Test;
 
 class MyNewTest extends TestCase

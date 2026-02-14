@@ -1,13 +1,13 @@
 <?php
 
-namespace Laratusk\SvgConverter;
+namespace Laratusk\Larasvg;
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Storage;
-use Laratusk\SvgConverter\Contracts\Provider;
-use Laratusk\SvgConverter\Converters\InkscapeConverter;
-use Laratusk\SvgConverter\Converters\ResvgConverter;
-use Laratusk\SvgConverter\Exceptions\SvgConverterException;
+use Laratusk\Larasvg\Contracts\Provider;
+use Laratusk\Larasvg\Converters\InkscapeConverter;
+use Laratusk\Larasvg\Converters\ResvgConverter;
+use Laratusk\Larasvg\Exceptions\SvgConverterException;
 
 class SvgConverterManager
 {

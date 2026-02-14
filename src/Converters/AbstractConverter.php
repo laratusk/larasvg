@@ -1,12 +1,12 @@
 <?php
 
-namespace Laratusk\SvgConverter\Converters;
+namespace Laratusk\Larasvg\Converters;
 
 use Illuminate\Contracts\Process\ProcessResult;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
-use Laratusk\SvgConverter\Contracts\Provider;
-use Laratusk\SvgConverter\Exceptions\SvgConverterException;
+use Laratusk\Larasvg\Contracts\Provider;
+use Laratusk\Larasvg\Exceptions\SvgConverterException;
 
 abstract class AbstractConverter implements Provider
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Laratusk\SvgConverter\Exceptions;
+namespace Laratusk\Larasvg\Exceptions;
 
 use Illuminate\Contracts\Process\ProcessResult;
 use RuntimeException;
