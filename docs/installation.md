@@ -126,3 +126,33 @@ apk add rsvg-convert
 ```
 
 :::
+
+### Installing CairoSVG
+
+::: code-group
+
+```bash [macOS]
+brew install cairo libffi
+pipx install cairosvg
+```
+
+```bash [Ubuntu/Debian]
+sudo apt install libcairo2-dev pkg-config python3-dev
+pip3 install cairosvg
+```
+
+```bash [Fedora/RHEL]
+sudo dnf install cairo-devel pkg-config python3-devel
+pip3 install cairosvg
+```
+
+```bash [Arch]
+sudo pacman -S python-cairosvg
+```
+
+```bash [Alpine]
+apk add cairo-dev
+pip3 install cairosvg
+```
+
+:::

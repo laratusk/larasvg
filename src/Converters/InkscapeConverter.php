@@ -3,30 +3,15 @@
 namespace Laratusk\Larasvg\Converters;
 
 use Illuminate\Support\Facades\Process;
+use Laratusk\Larasvg\Contracts\HasActionList;
 use Laratusk\Larasvg\Exceptions\SvgConverterException;
 
-class InkscapeConverter extends AbstractConverter
+class InkscapeConverter extends AbstractConverter implements HasActionList
 {
     /**
      * Supported export formats for Inkscape.
      */
     public const SUPPORTED_FORMATS = ['svg', 'png', 'ps', 'eps', 'pdf', 'emf', 'wmf'];
-
-    public function supportedFormats(): array
-    {
-        return self::SUPPORTED_FORMATS;
-    }
-
-    public function version(): string
-    {
-        $result = Process::timeout(10)->run(escapeshellarg($this->binary).' --version');
-
-        if ($result->failed()) {
-            throw SvgConverterException::fromProcess($result, "{$this->binary} --version", $this->providerName());
-        }
-
-        return trim($result->output());
-    }
 
     /**
      * Get the list of available Inkscape actions.

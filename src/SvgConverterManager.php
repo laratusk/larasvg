@@ -4,10 +4,8 @@ namespace Laratusk\Larasvg;
 
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Storage;
+use Laratusk\Larasvg\Contracts\HasActionList;
 use Laratusk\Larasvg\Contracts\Provider;
-use Laratusk\Larasvg\Converters\InkscapeConverter;
-use Laratusk\Larasvg\Converters\ResvgConverter;
-use Laratusk\Larasvg\Converters\RsvgConvertConverter;
 use Laratusk\Larasvg\Exceptions\SvgConverterException;
 
 class SvgConverterManager
@@ -16,6 +14,13 @@ class SvgConverterManager
      * The provider to use for the next operation.
      */
     protected ?string $provider = null;
+
+    /**
+     * Programmatically registered custom drivers (name => FQCN).
+     *
+     * @var array<string, string>
+     */
+    protected array $customDrivers = [];
 
     public function __construct(
         protected Application $app,
@@ -86,6 +91,26 @@ class SvgConverterManager
     }
 
     /**
+     * Register a custom driver class for the given provider name.
+     *
+     * The class must implement the Provider contract. This is intended for use
+     * inside a service provider's boot() method, or for testing custom drivers.
+     *
+     * ```php
+     * // In AppServiceProvider::boot()
+     * SvgConverter::extend('my-driver', MyCustomConverter::class);
+     * ```
+     *
+     * @param class-string<Provider> $class FQCN of a class implementing Provider
+     */
+    public function extend(string $driver, string $class): static
+    {
+        $this->customDrivers[$driver] = $class;
+
+        return $this;
+    }
+
+    /**
      * Get the version string of the given or default provider.
      */
     public function version(?string $provider = null): string
@@ -110,7 +135,7 @@ class SvgConverterManager
 
     /**
      * Get the list of available Inkscape actions.
-     * Only available when using the Inkscape provider.
+     * Only available for providers that implement HasActionList.
      */
     public function actionList(): string
     {
@@ -124,7 +149,7 @@ class SvgConverterManager
         try {
             $instance = $this->createConverter($providerName, $tempPath, $binary, $timeout);
 
-            if (! $instance instanceof InkscapeConverter) {
+            if (! $instance instanceof HasActionList) {
                 throw new SvgConverterException('actionList() is only available for the Inkscape provider.');
             }
 
@@ -208,14 +233,43 @@ class SvgConverterManager
 
     /**
      * Create a converter instance for the given provider.
+     *
+     * Resolves the driver class from programmatic registrations first,
+     * then from the `svg-converter.drivers` config map. This means new
+     * drivers can be added without modifying this class.
+     *
+     * @throws SvgConverterException
      */
     protected function createConverter(string $provider, string $inputPath, string $binary, int $timeout): Provider
     {
-        return match ($provider) {
-            'inkscape' => new InkscapeConverter($inputPath, $binary, $timeout),
-            'resvg' => new ResvgConverter($inputPath, $binary, $timeout),
-            'rsvg-convert' => new RsvgConvertConverter($inputPath, $binary, $timeout),
-            default => throw new SvgConverterException("Unknown SVG converter provider: {$provider}"),
-        };
+        // 1. Programmatic registrations take precedence (e.g. from extend())
+        /** @var string|null $class */
+        $class = $this->customDrivers[$provider] ?? null;
+
+        // 2. Fall back to the config-registered driver map
+        if ($class === null) {
+            /** @var \Illuminate\Config\Repository $config */
+            $config = $this->app->make('config');
+
+            $drivers = $config->get('svg-converter.drivers', []);
+            $class = is_array($drivers) && isset($drivers[$provider]) && is_string($drivers[$provider])
+                ? $drivers[$provider]
+                : null;
+        }
+
+        if ($class === null) {
+            throw new SvgConverterException("Unknown SVG converter provider: {$provider}");
+        }
+
+        if (! class_exists($class)) {
+            throw new SvgConverterException("Driver class [{$class}] does not exist.");
+        }
+
+        if (! is_subclass_of($class, Provider::class) && $class !== Provider::class) {
+            throw new SvgConverterException('Driver class ['.$class.'] must implement '.Provider::class.'.');
+        }
+
+        /** @var class-string<Provider> $class */
+        return new $class($inputPath, $binary, $timeout);
     }
 }

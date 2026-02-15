@@ -5,6 +5,7 @@ namespace Laratusk\Larasvg\Tests\Unit;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
 use Laratusk\Larasvg\Contracts\Provider;
+use Laratusk\Larasvg\Converters\CairosvgConverter;
 use Laratusk\Larasvg\Converters\InkscapeConverter;
 use Laratusk\Larasvg\Converters\ResvgConverter;
 use Laratusk\Larasvg\Exceptions\SvgConverterException;
@@ -197,5 +198,103 @@ class SvgConverterManagerTest extends TestCase
 
         // Default is resvg
         $this->manager->actionList();
+    }
+
+    // -------------------------------------------------------------------------
+    // Config-Driven Driver Map
+    // -------------------------------------------------------------------------
+
+    #[Test]
+    public function it_resolves_cairosvg_provider_from_config(): void
+    {
+        $converter = $this->manager->using('cairosvg')->open($this->testSvg);
+
+        $this->assertInstanceOf(CairosvgConverter::class, $converter);
+    }
+
+    #[Test]
+    public function it_resolves_all_built_in_drivers_from_config(): void
+    {
+        $this->assertInstanceOf(
+            ResvgConverter::class,
+            $this->manager->using('resvg')->open($this->testSvg),
+        );
+        $this->assertInstanceOf(
+            InkscapeConverter::class,
+            $this->manager->using('inkscape')->open($this->testSvg),
+        );
+        $this->assertInstanceOf(
+            CairosvgConverter::class,
+            $this->manager->using('cairosvg')->open($this->testSvg),
+        );
+    }
+
+    #[Test]
+    public function it_throws_for_driver_class_that_does_not_exist(): void
+    {
+        $this->app['config']->set('svg-converter.drivers.ghost-driver', 'App\\NonExistent\\Converter');
+
+        $this->expectException(SvgConverterException::class);
+        $this->expectExceptionMessage('Driver class [App\\NonExistent\\Converter] does not exist.');
+
+        $this->manager->using('ghost-driver')->open($this->testSvg);
+    }
+
+    #[Test]
+    public function it_throws_for_driver_class_that_does_not_implement_provider(): void
+    {
+        $this->app['config']->set('svg-converter.drivers.bad-driver', \stdClass::class);
+
+        $this->expectException(SvgConverterException::class);
+        $this->expectExceptionMessage('must implement');
+
+        $this->manager->using('bad-driver')->open($this->testSvg);
+    }
+
+    // -------------------------------------------------------------------------
+    // extend() — Programmatic Custom Driver Registration
+    // -------------------------------------------------------------------------
+
+    #[Test]
+    public function it_registers_and_resolves_a_custom_driver_via_extend(): void
+    {
+        $this->manager->extend('custom-resvg', ResvgConverter::class);
+
+        $converter = $this->manager->using('custom-resvg')->open($this->testSvg);
+
+        $this->assertInstanceOf(ResvgConverter::class, $converter);
+    }
+
+    #[Test]
+    public function it_custom_driver_takes_precedence_over_config(): void
+    {
+        // Register a custom mapping that overrides 'resvg' with InkscapeConverter
+        $this->manager->extend('resvg', InkscapeConverter::class);
+
+        $converter = $this->manager->open($this->testSvg); // default = resvg
+
+        // Custom registration wins over config
+        $this->assertInstanceOf(InkscapeConverter::class, $converter);
+    }
+
+    #[Test]
+    public function it_returns_static_from_extend_for_fluent_chaining(): void
+    {
+        $result = $this->manager->extend('my-driver', ResvgConverter::class);
+
+        $this->assertSame($this->manager, $result);
+    }
+
+    #[Test]
+    public function it_resolves_custom_driver_with_correct_binary_and_timeout(): void
+    {
+        $this->app['config']->set('svg-converter.providers.my-tool.binary', '/usr/local/bin/my-tool');
+        $this->app['config']->set('svg-converter.providers.my-tool.timeout', 120);
+
+        $this->manager->extend('my-tool', ResvgConverter::class);
+        $converter = $this->manager->using('my-tool')->open($this->testSvg);
+
+        $this->assertEquals('/usr/local/bin/my-tool', $converter->binary);
+        $this->assertEquals(120, $converter->getTimeout());
     }
 }

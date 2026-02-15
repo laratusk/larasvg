@@ -6,6 +6,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Process\ProcessManager;
 use Illuminate\Support\Facades\Facade;
 use Laratusk\Larasvg\Contracts\Provider;
+use Laratusk\Larasvg\Converters\CairosvgConverter;
 use Laratusk\Larasvg\Converters\InkscapeConverter;
 use Laratusk\Larasvg\Converters\ResvgConverter;
 use Laratusk\Larasvg\Converters\RsvgConvertConverter;
@@ -24,6 +25,7 @@ $providers = [
     'resvg' => ResvgConverter::class,
     'inkscape' => InkscapeConverter::class,
     'rsvg-convert' => RsvgConvertConverter::class,
+    'cairosvg' => CairosvgConverter::class,
 ];
 
 $name = $argv[1] ?? null;

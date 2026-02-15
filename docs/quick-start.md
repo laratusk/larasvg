@@ -38,6 +38,16 @@ SvgConverter::using('rsvg-convert')
     ->toFile(storage_path('app/output.pdf'));
 ```
 
+## Using CairoSVG
+
+```php
+SvgConverter::using('cairosvg')
+    ->open(resource_path('svg/file.svg'))
+    ->setFormat('pdf')
+    ->setScale(2.0)
+    ->toFile(storage_path('app/output.pdf'));
+```
+
 ## Auto-Generate Output Path
 
 When you don't specify an output path, the converted file is saved next to the input file:
