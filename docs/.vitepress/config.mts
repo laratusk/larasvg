@@ -11,6 +11,8 @@ export default defineConfig({
     ['meta', { property: 'og:title', content: 'LaraSVG' }],
     ['meta', { property: 'og:description', content: 'A modern Laravel package for SVG conversion with multiple provider support.' }],
     ['meta', { property: 'og:image', content: '/banner.png' }],
+    ['script', { async: '', src: 'https://www.googletagmanager.com/gtag/js?id=G-6Y6PEP1NW0' }],
+    ['script', {}, "window.dataLayer = window.dataLayer || [];\nfunction gtag(){dataLayer.push(arguments);}\ngtag('js', new Date());\ngtag('config', 'G-6Y6PEP1NW0');"],
   ],
 
   themeConfig: {
