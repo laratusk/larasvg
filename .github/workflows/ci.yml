@@ -141,6 +141,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          composer remove --dev larastan/larastan rector/rector --no-interaction --no-update
           composer require "illuminate/contracts:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
           composer install --no-interaction --prefer-dist
 
