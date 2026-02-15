@@ -12,6 +12,10 @@
 
 A modern Laravel package for SVG conversion with multiple provider support. Convert SVG files to PNG, PDF, EPS, and more using a fluent API and Laravel's Process facade.
 
+## Battle-Tested
+
+> Backed by over 80 million SVG-to-format conversions in production across three years, this codebase is truly battle-tested. Releasing it as a package was the logical evolution.
+
 ## Requirements
 
 - PHP 8.2+
