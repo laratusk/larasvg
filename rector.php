@@ -12,6 +12,7 @@ return RectorConfig::configure()
     ])
     ->withSkip([
         __DIR__.'/vendor',
+        __DIR__.'/try.php',
     ])
     ->withPhpSets(php82: true)
     ->withPreparedSets(

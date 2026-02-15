@@ -5,10 +5,10 @@ require __DIR__.'/vendor/autoload.php';
 use Illuminate\Foundation\Application;
 use Illuminate\Process\ProcessManager;
 use Illuminate\Support\Facades\Facade;
+use Laratusk\Larasvg\Contracts\Provider;
 use Laratusk\Larasvg\Converters\InkscapeConverter;
 use Laratusk\Larasvg\Converters\ResvgConverter;
 use Laratusk\Larasvg\Converters\RsvgConvertConverter;
-use Laratusk\Larasvg\Contracts\Provider;
 use Laratusk\Larasvg\Exceptions\SvgConverterException;
 
 // Bootstrap minimal Laravel app so Process facade works
@@ -21,8 +21,8 @@ Facade::setFacadeApplication($app);
 // ---------------------------------------------------------------------------
 
 $providers = [
-    'resvg'        => ResvgConverter::class,
-    'inkscape'     => InkscapeConverter::class,
+    'resvg' => ResvgConverter::class,
+    'inkscape' => InkscapeConverter::class,
     'rsvg-convert' => RsvgConvertConverter::class,
 ];
 
@@ -38,8 +38,8 @@ if ($name === null || ! isset($providers[$name])) {
 // Setup
 // ---------------------------------------------------------------------------
 
-$svg   = __DIR__.'/art/laratusk/drawing.svg';
-$tmp   = sys_get_temp_dir();
+$svg = __DIR__.'/art/laratusk/drawing.svg';
+$tmp = sys_get_temp_dir();
 $class = $providers[$name];
 
 /** @param class-string<Provider> $class */
