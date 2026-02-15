@@ -2,7 +2,21 @@
     <img src="art/banner.png" alt="LaraSVG Banner">
 </p>
 
+<p align="center">
+    <a href="https://packagist.org/packages/laratusk/larasvg"><img src="https://img.shields.io/packagist/v/laratusk/larasvg.svg?style=flat-square" alt="Latest Version"></a>
+    <a href="https://packagist.org/packages/laratusk/larasvg"><img src="https://img.shields.io/packagist/php-v/laratusk/larasvg.svg?style=flat-square" alt="PHP Version"></a>
+    <a href="https://packagist.org/packages/laratusk/larasvg"><img src="https://img.shields.io/badge/Laravel-10.x--12.x-red?style=flat-square" alt="Laravel Version"></a>
+    <a href="https://github.com/laratusk/larasvg/actions"><img src="https://img.shields.io/github/actions/workflow/status/laratusk/larasvg/ci.yml?branch=main&style=flat-square&label=tests" alt="Tests"></a>
+    <a href="https://packagist.org/packages/laratusk/larasvg"><img src="https://img.shields.io/packagist/l/laratusk/larasvg.svg?style=flat-square" alt="License"></a>
+</p>
+
 A modern Laravel package for SVG conversion with multiple provider support. Convert SVG files to PNG, PDF, EPS, and more using a fluent API and Laravel's Process facade.
+
+## Requirements
+
+- PHP 8.2+
+- Laravel 10.x, 11.x, or 12.x
+- At least one converter: [Resvg](https://github.com/linebender/resvg) or [Inkscape](https://inkscape.org/) 1.0+
 
 ## Quick Install
 

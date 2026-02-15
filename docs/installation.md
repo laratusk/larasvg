@@ -1,5 +1,10 @@
 # Installation
 
+## Requirements
+
+- PHP 8.2+
+- Laravel 10.x, 11.x, or 12.x
+
 ## Install via Composer
 
 ```bash

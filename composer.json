@@ -14,18 +14,18 @@
     "license": "MIT",
     "type": "library",
     "require": {
-        "php": "^8.4",
-        "illuminate/contracts": "^12.0",
-        "illuminate/process": "^12.0",
-        "illuminate/support": "^12.0",
-        "illuminate/filesystem": "^12.0",
+        "php": "^8.2",
+        "illuminate/contracts": "^10.0|^11.0|^12.0",
+        "illuminate/process": "^10.0|^11.0|^12.0",
+        "illuminate/support": "^10.0|^11.0|^12.0",
+        "illuminate/filesystem": "^10.0|^11.0|^12.0",
         "spatie/laravel-package-tools": "^1.16"
     },
     "require-dev": {
-        "larastan/larastan": "^3.0",
+        "larastan/larastan": "^2.0|^3.0",
         "laravel/pint": "^1.0",
-        "orchestra/testbench": "^10.0",
-        "phpunit/phpunit": "^11.0",
+        "orchestra/testbench": "^8.0|^9.0|^10.0",
+        "phpunit/phpunit": "^10.5|^11.0",
         "rector/rector": "^2.0"
     },
     "autoload": {

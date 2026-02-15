@@ -89,6 +89,18 @@ interface Provider
     public function timeout(int $seconds): static;
 
     /**
+     * Get the CLI options.
+     *
+     * @return array<string, mixed>
+     */
+    public function getOptions(): array;
+
+    /**
+     * Get the process timeout in seconds.
+     */
+    public function getTimeout(): int;
+
+    /**
      * Add an arbitrary CLI option with a value.
      */
     public function withOption(string $option, mixed $value): static;

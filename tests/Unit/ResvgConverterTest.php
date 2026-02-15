@@ -18,7 +18,6 @@ class ResvgConverterTest extends TestCase
         $this->testSvg = $this->createTempSvg();
     }
 
-    #[\Override]
     protected function tearDown(): void
     {
         if (file_exists($this->testSvg)) {
@@ -54,7 +53,7 @@ class ResvgConverterTest extends TestCase
         $converter = new ResvgConverter($this->testSvg, 'resvg', 60);
         $converter->setFormat('png');
 
-        $this->assertEmpty($converter->options);
+        $this->assertEmpty($converter->getOptions());
     }
 
     #[Test]
@@ -63,9 +62,9 @@ class ResvgConverterTest extends TestCase
         $converter = new ResvgConverter($this->testSvg, 'resvg', 60);
         $converter->setDimensions(800, 600, 150);
 
-        $this->assertEquals(800, $converter->options['width']);
-        $this->assertEquals(600, $converter->options['height']);
-        $this->assertEquals(150, $converter->options['dpi']);
+        $this->assertEquals(800, $converter->getOptions()['width']);
+        $this->assertEquals(600, $converter->getOptions()['height']);
+        $this->assertEquals(150, $converter->getOptions()['dpi']);
     }
 
     #[Test]
@@ -75,8 +74,8 @@ class ResvgConverterTest extends TestCase
         $converter->setBackground('#ffffff');
         $converter->setBackgroundOpacity(0.5);
 
-        $this->assertEquals('#ffffff', $converter->options['background']);
-        $this->assertEquals(0.5, $converter->options['background-opacity']);
+        $this->assertEquals('#ffffff', $converter->getOptions()['background']);
+        $this->assertEquals(0.5, $converter->getOptions()['background-opacity']);
     }
 
     #[Test]
@@ -85,7 +84,7 @@ class ResvgConverterTest extends TestCase
         $converter = new ResvgConverter($this->testSvg, 'resvg', 60);
         $converter->setZoom(2.0);
 
-        $this->assertEquals(2.0, $converter->options['zoom']);
+        $this->assertEquals(2.0, $converter->getOptions()['zoom']);
     }
 
     #[Test]
@@ -94,7 +93,7 @@ class ResvgConverterTest extends TestCase
         $converter = new ResvgConverter($this->testSvg, 'resvg', 60);
         $converter->setShapeRendering('crispEdges');
 
-        $this->assertEquals('crispEdges', $converter->options['shape-rendering']);
+        $this->assertEquals('crispEdges', $converter->getOptions()['shape-rendering']);
     }
 
     #[Test]
@@ -103,7 +102,7 @@ class ResvgConverterTest extends TestCase
         $converter = new ResvgConverter($this->testSvg, 'resvg', 60);
         $converter->setTextRendering('optimizeLegibility');
 
-        $this->assertEquals('optimizeLegibility', $converter->options['text-rendering']);
+        $this->assertEquals('optimizeLegibility', $converter->getOptions()['text-rendering']);
     }
 
     #[Test]
@@ -112,7 +111,7 @@ class ResvgConverterTest extends TestCase
         $converter = new ResvgConverter($this->testSvg, 'resvg', 60);
         $converter->setImageRendering('optimizeQuality');
 
-        $this->assertEquals('optimizeQuality', $converter->options['image-rendering']);
+        $this->assertEquals('optimizeQuality', $converter->getOptions()['image-rendering']);
     }
 
     #[Test]
@@ -121,7 +120,7 @@ class ResvgConverterTest extends TestCase
         $converter = new ResvgConverter($this->testSvg, 'resvg', 60);
         $converter->setDefaultFontFamily('Arial');
 
-        $this->assertEquals('Arial', $converter->options['font-family']);
+        $this->assertEquals('Arial', $converter->getOptions()['font-family']);
     }
 
     #[Test]
@@ -130,7 +129,7 @@ class ResvgConverterTest extends TestCase
         $converter = new ResvgConverter($this->testSvg, 'resvg', 60);
         $converter->setDefaultFontSize(16);
 
-        $this->assertEquals(16, $converter->options['font-size']);
+        $this->assertEquals(16, $converter->getOptions()['font-size']);
     }
 
     #[Test]
@@ -139,7 +138,7 @@ class ResvgConverterTest extends TestCase
         $converter = new ResvgConverter($this->testSvg, 'resvg', 60);
         $converter->useFontFile('/path/to/font.ttf');
 
-        $this->assertEquals('/path/to/font.ttf', $converter->options['use-font-file']);
+        $this->assertEquals('/path/to/font.ttf', $converter->getOptions()['use-font-file']);
     }
 
     #[Test]
@@ -148,7 +147,7 @@ class ResvgConverterTest extends TestCase
         $converter = new ResvgConverter($this->testSvg, 'resvg', 60);
         $converter->useFontsDir('/path/to/fonts');
 
-        $this->assertEquals('/path/to/fonts', $converter->options['use-fonts-dir']);
+        $this->assertEquals('/path/to/fonts', $converter->getOptions()['use-fonts-dir']);
     }
 
     #[Test]
@@ -157,8 +156,8 @@ class ResvgConverterTest extends TestCase
         $converter = new ResvgConverter($this->testSvg, 'resvg', 60);
         $converter->skipSystemFonts();
 
-        $this->assertArrayHasKey('skip-system-fonts', $converter->options);
-        $this->assertNull($converter->options['skip-system-fonts']);
+        $this->assertArrayHasKey('skip-system-fonts', $converter->getOptions());
+        $this->assertNull($converter->getOptions()['skip-system-fonts']);
     }
 
     #[Test]
@@ -167,7 +166,7 @@ class ResvgConverterTest extends TestCase
         $converter = new ResvgConverter($this->testSvg, 'resvg', 60);
         $converter->setResourcesDir('/path/to/resources');
 
-        $this->assertEquals('/path/to/resources', $converter->options['resources-dir']);
+        $this->assertEquals('/path/to/resources', $converter->getOptions()['resources-dir']);
     }
 
     #[Test]
@@ -225,12 +224,12 @@ class ResvgConverterTest extends TestCase
             ->timeout(120);
 
         $this->assertInstanceOf(ResvgConverter::class, $result);
-        $this->assertEquals(1024, $result->options['width']);
-        $this->assertEquals(768, $result->options['height']);
-        $this->assertEquals(150, $result->options['dpi']);
-        $this->assertEquals(2.0, $result->options['zoom']);
-        $this->assertEquals('crispEdges', $result->options['shape-rendering']);
-        $this->assertEquals('Arial', $result->options['font-family']);
+        $this->assertEquals(1024, $result->getOptions()['width']);
+        $this->assertEquals(768, $result->getOptions()['height']);
+        $this->assertEquals(150, $result->getOptions()['dpi']);
+        $this->assertEquals(2.0, $result->getOptions()['zoom']);
+        $this->assertEquals('crispEdges', $result->getOptions()['shape-rendering']);
+        $this->assertEquals('Arial', $result->getOptions()['font-family']);
     }
 
     #[Test]

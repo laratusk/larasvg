@@ -32,7 +32,6 @@ class ResvgIntegrationTest extends TestCase
         $this->cleanupFiles[] = $this->testSvg;
     }
 
-    #[\Override]
     protected function tearDown(): void
     {
         foreach ($this->cleanupFiles as $file) {

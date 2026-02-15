@@ -17,7 +17,6 @@ class InkscapeConversionTest extends TestCase
         $this->testSvg = $this->createTempSvg();
     }
 
-    #[\Override]
     protected function tearDown(): void
     {
         if (file_exists($this->testSvg)) {

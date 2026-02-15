@@ -10,7 +10,7 @@ class InkscapeConverter extends AbstractConverter
     /**
      * Supported export formats for Inkscape.
      */
-    public const array SUPPORTED_FORMATS = ['svg', 'png', 'ps', 'eps', 'pdf', 'emf', 'wmf'];
+    public const SUPPORTED_FORMATS = ['svg', 'png', 'ps', 'eps', 'pdf', 'emf', 'wmf'];
 
     public function supportedFormats(): array
     {
