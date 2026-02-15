@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Storage;
 use Laratusk\Larasvg\Contracts\Provider;
 use Laratusk\Larasvg\Converters\InkscapeConverter;
 use Laratusk\Larasvg\Converters\ResvgConverter;
+use Laratusk\Larasvg\Converters\RsvgConvertConverter;
 use Laratusk\Larasvg\Exceptions\SvgConverterException;
 
 class SvgConverterManager
@@ -213,6 +214,7 @@ class SvgConverterManager
         return match ($provider) {
             'inkscape' => new InkscapeConverter($inputPath, $binary, $timeout),
             'resvg' => new ResvgConverter($inputPath, $binary, $timeout),
+            'rsvg-convert' => new RsvgConvertConverter($inputPath, $binary, $timeout),
             default => throw new SvgConverterException("Unknown SVG converter provider: {$provider}"),
         };
     }

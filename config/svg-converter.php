@@ -7,9 +7,11 @@ return [
     | Default SVG Converter Provider
     |--------------------------------------------------------------------------
     |
-    | The default provider to use for SVG conversions. Supported: "resvg", "inkscape".
+    | The default provider to use for SVG conversions. Supported: "resvg",
+    | "inkscape", "rsvg-convert".
     | Resvg is recommended for PNG-only conversions due to its speed and simplicity.
     | Inkscape supports more formats (PDF, EPS, PS, EMF, WMF).
+    | Rsvg-convert supports PNG, PDF, PS, EPS, SVG — lightweight and widely available.
     |
     */
 
@@ -34,6 +36,11 @@ return [
         'inkscape' => [
             'binary' => env('INKSCAPE_PATH', 'inkscape'),
             'timeout' => env('INKSCAPE_TIMEOUT', 60),
+        ],
+
+        'rsvg-convert' => [
+            'binary' => env('RSVG_CONVERT_PATH', 'rsvg-convert'),
+            'timeout' => env('RSVG_CONVERT_TIMEOUT', 60),
         ],
 
     ],

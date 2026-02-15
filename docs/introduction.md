@@ -4,9 +4,10 @@ LaraSVG is a modern Laravel package for SVG conversion with multiple provider su
 
 ## Features
 
-- **Multi-provider architecture** — Switch between Resvg and Inkscape with a single method call
+- **Multi-provider architecture** — Switch between Resvg, Inkscape, and rsvg-convert with a single method call
 - **Resvg (default)** — Lightning-fast SVG to PNG conversion
 - **Inkscape** — Full-featured SVG conversion to PNG, PDF, PS, EPS, EMF, WMF
+- **rsvg-convert** — Lightweight librsvg tool for PNG, PDF, PS, EPS, and SVG output
 - **Fluent API** — Chainable methods for dimensions, background, format, and provider-specific options
 - **Laravel Filesystem** — Read from and write to any Laravel disk (S3, local, etc.)
 - **Stdout output** — Pipe conversion output directly to stdout for streaming
@@ -25,17 +26,18 @@ LaraSVG is a modern Laravel package for SVG conversion with multiple provider su
 - PHP 8.2+
 - Laravel 10.x, 11.x, or 12.x
 - At least one converter installed:
-  - [Resvg](https://github.com/linebender/resvg) (recommended for PNG)
-  - [Inkscape](https://inkscape.org/) 1.0+ (for PDF, EPS, PS, and other formats)
+  - [Resvg](https://github.com/linebender/resvg) — recommended for PNG
+  - [Inkscape](https://inkscape.org/) 1.0+ — for PDF, EPS, PS, EMF, WMF
+  - [rsvg-convert](https://wiki.gnome.org/Projects/LibRsvg) — lightweight alternative for PNG, PDF, PS, EPS, SVG
 
 ## Supported Formats
 
-| Format | Resvg | Inkscape |
-|--------|-------|----------|
-| PNG    | Yes   | Yes      |
-| PDF    | —     | Yes      |
-| SVG    | —     | Yes      |
-| PS     | —     | Yes      |
-| EPS    | —     | Yes      |
-| EMF    | —     | Yes      |
-| WMF    | —     | Yes      |
+| Format | Resvg | Inkscape | rsvg-convert |
+|--------|-------|----------|--------------|
+| PNG    | Yes   | Yes      | Yes          |
+| PDF    | —     | Yes      | Yes          |
+| SVG    | —     | Yes      | Yes          |
+| PS     | —     | Yes      | Yes          |
+| EPS    | —     | Yes      | Yes          |
+| EMF    | —     | Yes      | —            |
+| WMF    | —     | Yes      | —            |

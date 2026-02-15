@@ -62,6 +62,7 @@ You can install providers manually using the bundled shell script:
 # Install a specific provider
 ./vendor/laratusk/larasvg/bin/install.sh resvg
 ./vendor/laratusk/larasvg/bin/install.sh inkscape
+./vendor/laratusk/larasvg/bin/install.sh rsvg-convert
 ```
 
 ### Installing Resvg
@@ -96,6 +97,32 @@ sudo apt install inkscape
 
 ```bash [Arch]
 pacman -S inkscape
+```
+
+:::
+
+### Installing rsvg-convert
+
+::: code-group
+
+```bash [macOS]
+brew install librsvg
+```
+
+```bash [Ubuntu/Debian]
+sudo apt install librsvg2-bin
+```
+
+```bash [Fedora/RHEL]
+sudo dnf install librsvg2-tools
+```
+
+```bash [Arch]
+sudo pacman -S librsvg
+```
+
+```bash [Alpine]
+apk add rsvg-convert
 ```
 
 :::

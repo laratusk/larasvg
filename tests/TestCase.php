@@ -36,6 +36,8 @@ abstract class TestCase extends OrchestraTestCase
         $app['config']->set('svg-converter.providers.resvg.timeout', 60);
         $app['config']->set('svg-converter.providers.inkscape.binary', env('INKSCAPE_PATH', 'inkscape'));
         $app['config']->set('svg-converter.providers.inkscape.timeout', 60);
+        $app['config']->set('svg-converter.providers.rsvg-convert.binary', env('RSVG_CONVERT_PATH', 'rsvg-convert'));
+        $app['config']->set('svg-converter.providers.rsvg-convert.timeout', 60);
         $app['config']->set('svg-converter.default_disk', 'local');
     }
 
