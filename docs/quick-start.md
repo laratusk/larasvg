@@ -26,6 +26,18 @@ SvgConverter::using('inkscape')
     ->toFile(storage_path('app/output.pdf'));
 ```
 
+## Using rsvg-convert
+
+```php
+SvgConverter::using('rsvg-convert')
+    ->open(resource_path('svg/file.svg'))
+    ->setFormat('pdf')
+    ->setPageWidth('210mm')
+    ->setPageHeight('297mm')
+    ->keepAspectRatio()
+    ->toFile(storage_path('app/output.pdf'));
+```
+
 ## Auto-Generate Output Path
 
 When you don't specify an output path, the converted file is saved next to the input file:
@@ -60,6 +72,7 @@ Route::get('/convert', function () {
 ## Check Provider Version
 
 ```php
-$version = SvgConverter::version();            // Default provider
-$version = SvgConverter::version('inkscape');   // Specific provider
+$version = SvgConverter::version();                  // Default provider
+$version = SvgConverter::version('inkscape');         // Specific provider
+$version = SvgConverter::version('rsvg-convert');     // Specific provider
 ```

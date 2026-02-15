@@ -59,6 +59,7 @@ export default defineConfig({
         items: [
           { text: 'Resvg', link: '/providers/resvg' },
           { text: 'Inkscape', link: '/providers/inkscape' },
+          { text: 'Rsvg-convert', link: '/providers/rsvg-convert' },
         ],
       },
       {

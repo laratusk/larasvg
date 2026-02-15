@@ -1,12 +1,14 @@
 {
     "name": "laratusk/larasvg",
-    "description": "A modern Laravel package for SVG conversion with multiple provider support (Resvg, Inkscape). Convert SVG to PNG, PDF, EPS, and more.",
+    "description": "A modern Laravel package for SVG conversion with multiple provider support (Resvg, Inkscape, rsvg-convert). Convert SVG to PNG, PDF, EPS, and more.",
     "keywords": [
         "laravel",
         "svg",
         "converter",
         "resvg",
         "inkscape",
+        "librsvg",
+        "rsvg-convert",
         "png",
         "pdf",
         "vector"
@@ -64,6 +66,17 @@
             "@rector:test",
             "@analyse",
             "@test"
+        ]
+    },
+    "archive": {
+        "exclude": [
+            "try.php",
+            "try-*.php",
+            "tests/",
+            "docs/",
+            "art/",
+            "bin/",
+            ".github/"
         ]
     },
     "config": {

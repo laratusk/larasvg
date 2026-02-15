@@ -77,6 +77,14 @@ get_resvg_version() {
     fi
 }
 
+get_rsvg_convert_version() {
+    if command -v rsvg-convert &>/dev/null; then
+        rsvg-convert --version 2>/dev/null | head -1 || echo ""
+    else
+        echo ""
+    fi
+}
+
 get_inkscape_path() {
     command -v inkscape 2>/dev/null || echo ""
 }
@@ -85,14 +93,20 @@ get_resvg_path() {
     command -v resvg 2>/dev/null || echo ""
 }
 
+get_rsvg_convert_path() {
+    command -v rsvg-convert 2>/dev/null || echo ""
+}
+
 # ---------------------------------------------------------------------------
 #  --check: JSON output for artisan command
 # ---------------------------------------------------------------------------
 if [ "${1:-}" = "--check" ]; then
     inkscape_version=$(get_inkscape_version)
     resvg_version=$(get_resvg_version)
+    rsvg_convert_version=$(get_rsvg_convert_version)
     inkscape_path=$(get_inkscape_path)
     resvg_path=$(get_resvg_path)
+    rsvg_convert_path=$(get_rsvg_convert_path)
     os_info=$(detect_os)
 
     cat <<EOF
@@ -108,6 +122,11 @@ if [ "${1:-}" = "--check" ]; then
         "installed": $([ -n "$resvg_version" ] && echo "true" || echo "false"),
         "version": "$resvg_version",
         "path": "$resvg_path"
+    },
+    "rsvg-convert": {
+        "installed": $([ -n "$rsvg_convert_version" ] && echo "true" || echo "false"),
+        "version": "$rsvg_convert_version",
+        "path": "$rsvg_convert_path"
     }
 }
 EOF
@@ -154,10 +173,19 @@ print_status() {
     local resvg_version
     resvg_version=$(get_resvg_version)
     if [ -n "$resvg_version" ]; then
-        echo -e "  ${GREEN}●${NC} Resvg     ${GREEN}installed${NC}  ${DIM}${resvg_version}${NC}"
-        echo -e "              ${DIM}$(get_resvg_path)${NC}"
+        echo -e "  ${GREEN}●${NC} Resvg        ${GREEN}installed${NC}  ${DIM}${resvg_version}${NC}"
+        echo -e "                 ${DIM}$(get_resvg_path)${NC}"
     else
-        echo -e "  ${RED}○${NC} Resvg     ${RED}not installed${NC}"
+        echo -e "  ${RED}○${NC} Resvg        ${RED}not installed${NC}"
+    fi
+
+    local rsvg_convert_version
+    rsvg_convert_version=$(get_rsvg_convert_version)
+    if [ -n "$rsvg_convert_version" ]; then
+        echo -e "  ${GREEN}●${NC} Rsvg-convert ${GREEN}installed${NC}  ${DIM}${rsvg_convert_version}${NC}"
+        echo -e "                 ${DIM}$(get_rsvg_convert_path)${NC}"
+    else
+        echo -e "  ${RED}○${NC} Rsvg-convert ${RED}not installed${NC}"
     fi
 
     echo ""
@@ -288,6 +316,72 @@ install_resvg() {
     fi
 }
 
+install_rsvg_convert() {
+    local os_info
+    os_info=$(detect_os)
+    local distro="${os_info##*:}"
+
+    echo -e "  ${BLUE}Installing rsvg-convert (librsvg)...${NC}"
+    echo ""
+
+    case "$distro" in
+        macos)
+            if command -v brew &>/dev/null; then
+                echo -e "  ${DIM}Using Homebrew...${NC}"
+                brew install librsvg
+            else
+                echo -e "  ${RED}Homebrew not found.${NC}"
+                echo -e "  Install Homebrew first: ${CYAN}https://brew.sh${NC}"
+                echo -e "  Then run: ${CYAN}brew install librsvg${NC}"
+                exit 1
+            fi
+            ;;
+        debian)
+            echo -e "  ${DIM}Using apt...${NC}"
+            sudo apt-get update -qq
+            sudo apt-get install -y librsvg2-bin
+            ;;
+        fedora)
+            echo -e "  ${DIM}Using dnf...${NC}"
+            sudo dnf install -y librsvg2-tools
+            ;;
+        arch)
+            echo -e "  ${DIM}Using pacman...${NC}"
+            sudo pacman -S --noconfirm librsvg
+            ;;
+        alpine)
+            echo -e "  ${DIM}Using apk...${NC}"
+            sudo apk add rsvg-convert
+            ;;
+        suse)
+            echo -e "  ${DIM}Using zypper...${NC}"
+            sudo zypper install -y rsvg-convert
+            ;;
+        *)
+            echo -e "  ${RED}Unsupported OS for automatic installation.${NC}"
+            echo -e "  Please install librsvg manually:"
+            echo -e "    Alpine:       ${CYAN}apk add rsvg-convert${NC}"
+            echo -e "    Ubuntu/Debian:${CYAN}sudo apt-get install librsvg2-bin${NC}"
+            echo -e "    Fedora/RHEL:  ${CYAN}sudo dnf install librsvg2-tools${NC}"
+            echo -e "    Arch:         ${CYAN}sudo pacman -S librsvg${NC}"
+            echo -e "    macOS:        ${CYAN}brew install librsvg${NC}"
+            exit 1
+            ;;
+    esac
+
+    echo ""
+    local version
+    version=$(get_rsvg_convert_version)
+    if [ -n "$version" ]; then
+        echo -e "  ${GREEN}rsvg-convert installed successfully!${NC}"
+        echo -e "  ${DIM}${version}${NC}"
+        echo -e "  ${DIM}$(get_rsvg_convert_path)${NC}"
+    else
+        echo -e "  ${RED}Installation may have failed. Please check the output above.${NC}"
+        exit 1
+    fi
+}
+
 # ---------------------------------------------------------------------------
 #  Main
 # ---------------------------------------------------------------------------
@@ -318,18 +412,32 @@ case "${1:-}" in
         install_resvg
         echo ""
         ;;
+    rsvg-convert)
+        print_header
+        existing=$(get_rsvg_convert_version)
+        if [ -n "$existing" ]; then
+            echo -e "  ${GREEN}rsvg-convert is already installed.${NC}"
+            echo -e "  ${DIM}${existing}${NC}"
+            echo -e "  ${DIM}$(get_rsvg_convert_path)${NC}"
+            echo ""
+            exit 0
+        fi
+        install_rsvg_convert
+        echo ""
+        ;;
     "")
         print_header
         print_status
         echo -e "  ${BOLD}Usage:${NC}"
-        echo -e "    ${CYAN}./install.sh inkscape${NC}   Install Inkscape"
-        echo -e "    ${CYAN}./install.sh resvg${NC}      Install Resvg"
-        echo -e "    ${CYAN}./install.sh --check${NC}    JSON status (for artisan)"
+        echo -e "    ${CYAN}./install.sh inkscape${NC}       Install Inkscape"
+        echo -e "    ${CYAN}./install.sh resvg${NC}          Install Resvg"
+        echo -e "    ${CYAN}./install.sh rsvg-convert${NC}   Install rsvg-convert (librsvg)"
+        echo -e "    ${CYAN}./install.sh --check${NC}        JSON status (for artisan)"
         echo ""
         ;;
     *)
         echo -e "  ${RED}Unknown provider: ${1}${NC}"
-        echo -e "  Supported providers: ${CYAN}inkscape${NC}, ${CYAN}resvg${NC}"
+        echo -e "  Supported providers: ${CYAN}inkscape${NC}, ${CYAN}resvg${NC}, ${CYAN}rsvg-convert${NC}"
         exit 1
         ;;
 esac

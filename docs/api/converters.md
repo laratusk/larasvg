@@ -31,13 +31,13 @@ abstract public function buildCommand(): string;
 
 Subclasses can override these to match their CLI flag names:
 
-| Method | Default | Resvg | Inkscape |
-|--------|---------|-------|----------|
-| `widthOption()` | `export-width` | `width` | `export-width` |
-| `heightOption()` | `export-height` | `height` | `export-height` |
-| `dpiOption()` | `export-dpi` | `dpi` | `export-dpi` |
-| `backgroundOption()` | `export-background` | `background` | `export-background` |
-| `backgroundOpacityOption()` | `export-background-opacity` | `background-opacity` | `export-background-opacity` |
+| Method | Default | Resvg | Inkscape | rsvg-convert |
+|--------|---------|-------|----------|--------------|
+| `widthOption()` | `export-width` | `width` | `export-width` | `width` |
+| `heightOption()` | `export-height` | `height` | `export-height` | `height` |
+| `dpiOption()` | `export-dpi` | `dpi` | `export-dpi` | — (overridden) |
+| `backgroundOption()` | `export-background` | `background` | `export-background` | `background-color` |
+| `backgroundOpacityOption()` | `export-background-opacity` | `background-opacity` | `export-background-opacity` | — (combined into color) |
 
 ---
 
@@ -107,3 +107,42 @@ public const array SUPPORTED_FORMATS = ['svg', 'png', 'ps', 'eps', 'pdf', 'emf',
 | `vacuumDefs` | `(): static` | Remove unused defs |
 | `query` | `(?string $objectId = null): array` | Query dimensions |
 | `actionList` | `(): string` | List available actions |
+
+---
+
+## RsvgConvertConverter
+
+`Laratusk\Larasvg\Converters\RsvgConvertConverter`
+
+Implements SVG conversion using the `rsvg-convert` CLI (from librsvg). Supports PNG, PDF, PS, EPS, and SVG output.
+
+### Supported Formats
+
+```php
+public const array SUPPORTED_FORMATS = ['png', 'pdf', 'ps', 'eps', 'svg'];
+```
+
+### Additional Methods
+
+| Method | Signature | Description |
+|--------|-----------|-------------|
+| `setZoom` | `(float $zoom): static` | Set zoom factor |
+| `setXZoom` | `(float $zoom): static` | Horizontal zoom factor |
+| `setYZoom` | `(float $zoom): static` | Vertical zoom factor |
+| `keepAspectRatio` | `(bool $keep = true): static` | Preserve aspect ratio |
+| `setStylesheet` | `(string $path): static` | External CSS stylesheet |
+| `unlimited` | `(bool $unlimited = true): static` | Disable parser guards |
+| `setPageWidth` | `(string $width): static` | Page width for PDF/PS (e.g. `'210mm'`) |
+| `setPageHeight` | `(string $height): static` | Page height for PDF/PS (e.g. `'297mm'`) |
+| `setTopMargin` | `(string $margin): static` | Top margin/offset |
+| `setLeftMargin` | `(string $margin): static` | Left margin/offset |
+| `keepImageData` | `(bool $keep = true): static` | Control image compression in PDF/PS |
+| `setBaseUri` | `(string $uri): static` | Base URI for relative references |
+
+::: info DPI behaviour
+`setDpi()` sets both `--dpi-x` and `--dpi-y` simultaneously, since `rsvg-convert` uses separate flags for each axis.
+:::
+
+::: info Background opacity
+`rsvg-convert` has no `--background-opacity` flag. Calling `setBackgroundOpacity()` combines the value with the background color into a single `rgba()` string.
+:::

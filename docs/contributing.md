@@ -10,6 +10,7 @@ Thank you for considering contributing to LaraSVG! This guide will help you get 
 - Composer
 - (Optional) [Resvg](https://github.com/linebender/resvg) — for running integration tests
 - (Optional) [Inkscape](https://inkscape.org/) 1.0+ — for running integration tests
+- (Optional) [rsvg-convert](https://wiki.gnome.org/Projects/LibRsvg) — for running integration tests
 
 ### Installation
 
@@ -114,18 +115,19 @@ class MyNewTest extends TestCase
 ```
 src/
 ├── Contracts/
-│   └── Provider.php              # Interface for all converters
+│   └── Provider.php                  # Interface for all converters
 ├── Converters/
-│   ├── AbstractConverter.php     # Shared converter logic
-│   ├── InkscapeConverter.php     # Inkscape CLI implementation
-│   └── ResvgConverter.php        # Resvg CLI implementation
+│   ├── AbstractConverter.php         # Shared converter logic
+│   ├── InkscapeConverter.php         # Inkscape CLI implementation
+│   ├── ResvgConverter.php            # Resvg CLI implementation
+│   └── RsvgConvertConverter.php      # rsvg-convert CLI implementation
 ├── Exceptions/
-│   └── SvgConverterException.php # Custom exception with process details
+│   └── SvgConverterException.php     # Custom exception with process details
 ├── Facades/
-│   └── SvgConverter.php          # Laravel facade
+│   └── SvgConverter.php              # Laravel facade
 ├── Commands/
-│   └── SetupCommand.php          # artisan larasvg:setup
-├── SvgConverterManager.php       # Manager (provider selection, file opening)
+│   └── SetupCommand.php              # artisan larasvg:setup
+├── SvgConverterManager.php           # Manager (provider selection, file opening)
 └── SvgConverterServiceProvider.php
 ```
 
@@ -143,6 +145,22 @@ src/
 3. Override option name methods (`widthOption()`, etc.) if the CLI uses different flag names
 4. Register the provider in `SvgConverterManager::createConverter()`
 5. Add unit, feature, and integration tests
+
+## Manual Testing Script
+
+The repo includes `try.php` — a local scratch script for quickly testing any provider against the real binary without running the full test suite:
+
+```bash
+php try.php rsvg-convert
+php try.php resvg
+php try.php inkscape
+```
+
+Running without arguments prints the list of available providers. The script prints the version, supported formats, and the output path and file size for each format the provider supports.
+
+::: info
+`try.php` is tracked in git for convenience but is **not bundled in Composer releases** (`archive.exclude` in `composer.json`). It is purely a development tool and has no impact on package consumers.
+:::
 
 ## Pull Request Workflow
 
