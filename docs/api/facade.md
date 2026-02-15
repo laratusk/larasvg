@@ -8,10 +8,10 @@ The facade provides static access to the `SvgConverterManager` instance.
 
 ### `open(string $path): Provider`
 
-Open a local SVG file for conversion.
+Open a local SVG file for conversion. The path must be an absolute file path — use Laravel's path helpers such as `resource_path()`, `storage_path()`, `base_path()`, or `public_path()`.
 
 ```php
-$converter = SvgConverter::open('/path/to/file.svg');
+$converter = SvgConverter::open(resource_path('svg/file.svg'));
 ```
 
 **Throws:** `SvgConverterException` if the file does not exist.
@@ -45,7 +45,7 @@ $converter = SvgConverter::openFromContent($svgString);
 Switch the provider for the next operation. Resets after the operation completes.
 
 ```php
-$converter = SvgConverter::using('inkscape')->open('file.svg');
+$converter = SvgConverter::using('inkscape')->open(resource_path('svg/file.svg'));
 ```
 
 ---

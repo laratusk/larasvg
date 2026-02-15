@@ -28,12 +28,12 @@ $converter->setBackgroundOpacity(0.5);
 ## Combined Example
 
 ```php
-SvgConverter::open('logo.svg')
+SvgConverter::open(resource_path('svg/logo.svg'))
     ->setFormat('png')
     ->setDimensions(512, 512)
     ->setBackground('#ffffff')
     ->setBackgroundOpacity(1.0)
-    ->toFile('logo-white-bg.png');
+    ->toFile(storage_path('app/logo-white-bg.png'));
 ```
 
 ## Validation

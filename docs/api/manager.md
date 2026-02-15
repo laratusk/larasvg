@@ -19,7 +19,7 @@ Receives the Laravel application container.
 Open a local file for processing.
 
 ```php
-$converter = $manager->open('/path/to/file.svg');
+$converter = $manager->open(resource_path('svg/file.svg'));
 ```
 
 - Verifies the file exists
@@ -60,7 +60,7 @@ $converter = $manager->openFromContent($svgString);
 Switch provider for the next operation.
 
 ```php
-$manager->using('inkscape')->open('file.svg');
+$manager->using('inkscape')->open(resource_path('svg/file.svg'));
 ```
 
 The provider resets to the default after the next `open()` / `openFromDisk()` / `openFromContent()` call.

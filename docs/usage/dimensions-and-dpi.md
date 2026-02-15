@@ -21,12 +21,12 @@ $converter->setDpi(300);
 All methods return the converter instance, so you can chain them:
 
 ```php
-SvgConverter::open('logo.svg')
+SvgConverter::open(resource_path('svg/logo.svg'))
     ->setWidth(1024)
     ->setHeight(1024)
     ->setDpi(96)
     ->setFormat('png')
-    ->toFile('logo.png');
+    ->toFile(storage_path('app/logo.png'));
 ```
 
 ## DPI

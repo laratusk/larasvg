@@ -20,9 +20,9 @@
 use Laratusk\Larasvg\Facades\SvgConverter;
 
 SvgConverter::using('inkscape')
-    ->open('design.svg')
+    ->open(resource_path('svg/design.svg'))
     ->setFormat('pdf')
-    ->toFile('design.pdf');
+    ->toFile(storage_path('app/design.pdf'));
 ```
 
 ## Export Area
@@ -188,12 +188,12 @@ $dimensions = $converter->query('my-rect');
 
 ```php
 SvgConverter::using('inkscape')
-    ->open('design.svg')
+    ->open(resource_path('svg/design.svg'))
     ->setFormat('pdf')
     ->setDimensions(1024, 768, 300)
     ->exportAreaDrawing()
     ->exportTextToPath()
     ->exportPdfVersion('1.5')
     ->exportMargin(10)
-    ->toFile('design-print.pdf');
+    ->toFile(storage_path('app/design-print.pdf'));
 ```

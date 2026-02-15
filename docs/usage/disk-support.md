@@ -20,11 +20,11 @@ The file is downloaded to a temporary location and automatically cleaned up afte
 
 ```php
 // Convert and save to S3
-$path = SvgConverter::open('/local/path/logo.svg')
+$path = SvgConverter::open(resource_path('svg/logo.svg'))
     ->toDisk('s3', 'exports/logo.png');
 
 // With explicit format
-$path = SvgConverter::open('/local/path/logo.svg')
+$path = SvgConverter::open(resource_path('svg/logo.svg'))
     ->toDisk('s3', 'exports/logo', 'png');
 ```
 

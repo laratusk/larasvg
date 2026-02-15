@@ -5,7 +5,7 @@ LaraSVG can output conversion results directly to stdout, which is useful for st
 ## Basic Usage
 
 ```php
-$binary = SvgConverter::open('logo.svg')
+$binary = SvgConverter::open(resource_path('svg/logo.svg'))
     ->setDimensions(512, 512)
     ->toStdout('png');
 ```

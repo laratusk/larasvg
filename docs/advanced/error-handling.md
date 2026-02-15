@@ -9,7 +9,7 @@ use Laratusk\Larasvg\Exceptions\SvgConverterException;
 use Laratusk\Larasvg\Facades\SvgConverter;
 
 try {
-    SvgConverter::open('file.svg')
+    SvgConverter::open(resource_path('svg/file.svg'))
         ->setFormat('png')
         ->convert();
 } catch (SvgConverterException $e) {
@@ -55,15 +55,15 @@ Stderr: resvg: error: file not found
 ### File Not Found
 
 ```php
-// Throws: "Input file does not exist: /bad/path.svg"
-SvgConverter::open('/bad/path.svg');
+// Throws: "Input file does not exist: /var/www/html/resources/svg/missing.svg"
+SvgConverter::open(resource_path('svg/missing.svg'));
 ```
 
 ### Unsupported Format
 
 ```php
 // Throws: "Unsupported export format: pdf. Supported by Resvg: png"
-SvgConverter::open('file.svg')->setFormat('pdf');
+SvgConverter::open(resource_path('svg/file.svg'))->setFormat('pdf');
 ```
 
 ### Invalid Color

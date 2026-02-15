@@ -7,7 +7,7 @@ LaraSVG provides several ways to output the converted file.
 Auto-generates the output path based on the input filename, or use a custom name:
 
 ```php
-// Auto-generate: /path/to/file.svg → /path/to/file.png
+// Auto-generate: input.svg → input.png (saved next to the input file)
 $path = $converter->setFormat('png')->convert();
 
 // Custom filename (relative to input directory)
@@ -19,7 +19,7 @@ $path = $converter->setFormat('png')->convert('output.png');
 Save to a specific absolute path:
 
 ```php
-$path = $converter->toFile('/absolute/path/output.png');
+$path = $converter->toFile(storage_path('app/output.png'));
 ```
 
 The format is inferred from the file extension if not explicitly set.
