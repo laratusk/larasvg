@@ -6,7 +6,7 @@ hero:
   text: SVG Conversion for Laravel
   tagline: Convert SVG files to PNG, PDF, EPS, and more using a fluent API with Resvg and Inkscape support.
   image:
-    src: /logo.png
+    src: /banner.svg
     alt: LaraSVG
   actions:
     - theme: brand
