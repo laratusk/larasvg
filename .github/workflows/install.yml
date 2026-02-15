@@ -113,7 +113,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Install base tools
-        run: pacman -Sy --noconfirm bash which sudo
+        run: pacman -Syu --noconfirm bash which sudo
       - name: Verify not installed
         run: |
           chmod +x bin/install.sh

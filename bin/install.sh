@@ -226,7 +226,7 @@ install_inkscape() {
             ;;
         arch)
             echo -e "  ${DIM}Using pacman...${NC}"
-            sudo pacman -S --noconfirm inkscape
+            sudo pacman -Syu --noconfirm inkscape
             ;;
         alpine)
             echo -e "  ${DIM}Using apk...${NC}"
@@ -347,7 +347,7 @@ install_rsvg_convert() {
             ;;
         arch)
             echo -e "  ${DIM}Using pacman...${NC}"
-            sudo pacman -S --noconfirm librsvg
+            sudo pacman -Syu --noconfirm librsvg
             ;;
         alpine)
             echo -e "  ${DIM}Using apk...${NC}"
