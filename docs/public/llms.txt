@@ -1,0 +1,46 @@
+# LaraSVG
+
+> A modern Laravel package for SVG conversion with multiple provider support.
+
+LaraSVG provides a fluent API to convert SVG files to PNG, PDF, EPS, and more using Resvg or Inkscape as conversion providers.
+
+## Docs
+
+- [Introduction](https://larasvg.laratusk.org/introduction)
+- [Installation](https://larasvg.laratusk.org/installation)
+- [Configuration](https://larasvg.laratusk.org/configuration)
+- [Quick Start](https://larasvg.laratusk.org/quick-start)
+
+## Usage
+
+- [Basic Conversion](https://larasvg.laratusk.org/usage/basic-conversion)
+- [Dimensions & DPI](https://larasvg.laratusk.org/usage/dimensions-and-dpi)
+- [Background](https://larasvg.laratusk.org/usage/background)
+- [Output Methods](https://larasvg.laratusk.org/usage/output-methods)
+- [Disk Support](https://larasvg.laratusk.org/usage/disk-support)
+- [Stdout Streaming](https://larasvg.laratusk.org/usage/stdout-streaming)
+- [Dynamic Options](https://larasvg.laratusk.org/usage/dynamic-options)
+
+## Providers
+
+- [Resvg](https://larasvg.laratusk.org/providers/resvg)
+- [Inkscape](https://larasvg.laratusk.org/providers/inkscape)
+
+## Advanced
+
+- [Error Handling](https://larasvg.laratusk.org/advanced/error-handling)
+- [Testing](https://larasvg.laratusk.org/advanced/testing)
+- [Artisan Commands](https://larasvg.laratusk.org/advanced/artisan-commands)
+
+## API Reference
+
+- [Facade](https://larasvg.laratusk.org/api/facade)
+- [Manager](https://larasvg.laratusk.org/api/manager)
+- [Provider Interface](https://larasvg.laratusk.org/api/provider-interface)
+- [Converters](https://larasvg.laratusk.org/api/converters)
+- [Exceptions](https://larasvg.laratusk.org/api/exceptions)
+
+## Optional
+
+- [Contributing](https://larasvg.laratusk.org/contributing)
+- [GitHub Repository](https://github.com/laratusk/larasvg)

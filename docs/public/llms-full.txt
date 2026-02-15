@@ -1,0 +1,619 @@
+# LaraSVG
+
+> A modern Laravel package for SVG conversion with multiple provider support.
+
+LaraSVG provides a fluent API to convert SVG files to PNG, PDF, EPS, and more using Resvg or Inkscape as conversion providers.
+
+---
+
+# Introduction
+
+LaraSVG is a modern Laravel package for SVG conversion with multiple provider support. Convert SVG files to PNG, PDF, EPS, and more using a fluent API and Laravel's Process facade.
+
+## Features
+
+- **Multi-provider architecture** — Switch between Resvg and Inkscape with a single method call
+- **Resvg (default)** — Lightning-fast SVG to PNG conversion
+- **Inkscape** — Full-featured SVG conversion to PNG, PDF, PS, EPS, EMF, WMF
+- **Fluent API** — Chainable methods for dimensions, background, format, and provider-specific options
+- **Laravel Filesystem** — Read from and write to any Laravel disk (S3, local, etc.)
+- **Stdout output** — Pipe conversion output directly to stdout for streaming
+- **Testable** — Built on Laravel's Process facade with full `Process::fake()` support
+- **Facade** — Clean `SvgConverter::` static API with IDE autocompletion
+- **Setup command** — Interactive `php artisan larasvg:setup` to install providers
+
+## Code Quality
+
+- **Test Coverage** — 98.62% line coverage with full feature and unit tests
+- **PHPStan** — Compliant with Level 9 (Max) for robust type safety
+- **Type Safety** — 100% typed properties and return types
+
+## Requirements
+
+- PHP 8.2+
+- Laravel 10.x, 11.x, or 12.x
+- At least one converter installed:
+  - [Resvg](https://github.com/linebender/resvg) (recommended for PNG)
+  - [Inkscape](https://inkscape.org/) 1.0+ (for PDF, EPS, PS, and other formats)
+
+## Supported Formats
+
+| Format | Resvg | Inkscape |
+|--------|-------|----------|
+| PNG    | Yes   | Yes      |
+| PDF    | —     | Yes      |
+| SVG    | —     | Yes      |
+| PS     | —     | Yes      |
+| EPS    | —     | Yes      |
+| EMF    | —     | Yes      |
+| WMF    | —     | Yes      |
+
+---
+
+# Installation
+
+## Requirements
+
+- PHP 8.2+
+- Laravel 10.x, 11.x, or 12.x
+
+## Install via Composer
+
+```bash
+composer require laratusk/larasvg
+```
+
+## Publish Configuration
+
+```bash
+php artisan vendor:publish --tag=larasvg-config
+```
+
+This will create `config/svg-converter.php` with default settings.
+
+## Setup Providers
+
+Run the interactive setup command to detect and install conversion providers:
+
+```bash
+php artisan larasvg:setup
+```
+
+## Manual Installation
+
+### Installing Resvg
+
+```bash
+# macOS
+brew install resvg
+
+# Ubuntu/Debian
+cargo install resvg
+
+# Arch
+pacman -S resvg
+```
+
+### Installing Inkscape
+
+```bash
+# macOS
+brew install --cask inkscape
+
+# Ubuntu/Debian
+sudo apt install inkscape
+
+# Arch
+pacman -S inkscape
+```
+
+---
+
+# Configuration
+
+After publishing the config file, you'll find it at `config/svg-converter.php`.
+
+## Full Configuration
+
+```php
+return [
+    'default' => env('SVG_CONVERTER_DRIVER', 'resvg'),
+
+    'providers' => [
+        'resvg' => [
+            'binary' => env('RESVG_PATH', 'resvg'),
+            'timeout' => env('RESVG_TIMEOUT', 60),
+        ],
+        'inkscape' => [
+            'binary' => env('INKSCAPE_PATH', 'inkscape'),
+            'timeout' => env('INKSCAPE_TIMEOUT', 60),
+        ],
+    ],
+
+    'default_disk' => env('SVG_CONVERTER_DISK', 'local'),
+];
+```
+
+## Environment Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `SVG_CONVERTER_DRIVER` | `resvg` | Default conversion provider |
+| `RESVG_PATH` | `resvg` | Path to the Resvg binary |
+| `RESVG_TIMEOUT` | `60` | Resvg process timeout (seconds) |
+| `INKSCAPE_PATH` | `inkscape` | Path to the Inkscape binary |
+| `INKSCAPE_TIMEOUT` | `60` | Inkscape process timeout (seconds) |
+| `SVG_CONVERTER_DISK` | `local` | Default Laravel filesystem disk |
+
+---
+
+# Quick Start
+
+## Basic Conversion with Resvg (default)
+
+```php
+use Laratusk\Larasvg\Facades\SvgConverter;
+
+SvgConverter::open(resource_path('svg/file.svg'))
+    ->setFormat('png')
+    ->setDimensions(1024, 1024)
+    ->toFile(storage_path('app/output.png'));
+```
+
+## Using Inkscape
+
+```php
+SvgConverter::using('inkscape')
+    ->open(resource_path('svg/file.svg'))
+    ->setFormat('pdf')
+    ->toFile(storage_path('app/output.pdf'));
+```
+
+## Auto-Generate Output Path
+
+```php
+$outputPath = SvgConverter::open(resource_path('svg/file.svg'))
+    ->setFormat('png')
+    ->convert();
+// => resources/svg/file.png
+```
+
+## Save to Laravel Disk
+
+```php
+SvgConverter::open(resource_path('svg/file.svg'))
+    ->toDisk('s3', 'exports/image.png');
+```
+
+## Stream to HTTP Response
+
+```php
+Route::get('/convert', function () {
+    $binary = SvgConverter::open(storage_path('app/logo.svg'))
+        ->setDimensions(512, 512)
+        ->toStdout('png');
+
+    return response($binary)
+        ->header('Content-Type', 'image/png');
+});
+```
+
+---
+
+# Basic Conversion
+
+## Opening Files
+
+### From a Local Path
+
+```php
+use Laratusk\Larasvg\Facades\SvgConverter;
+
+$converter = SvgConverter::open(resource_path('svg/file.svg'));
+```
+
+### From a Laravel Disk
+
+```php
+$converter = SvgConverter::openFromDisk('s3', 'designs/logo.svg');
+```
+
+### From Raw SVG Content
+
+```php
+$svgString = '<svg xmlns="http://www.w3.org/2000/svg">...</svg>';
+$converter = SvgConverter::openFromContent($svgString);
+```
+
+## Setting the Format
+
+```php
+$converter->setFormat('png');
+```
+
+## Converting
+
+```php
+$path = SvgConverter::open(resource_path('svg/file.svg'))
+    ->setFormat('png')
+    ->convert();
+
+$path = SvgConverter::open(resource_path('svg/file.svg'))
+    ->setFormat('png')
+    ->convert('output.png');
+```
+
+## Switching Providers
+
+```php
+SvgConverter::using('inkscape')
+    ->open(resource_path('svg/file.svg'))
+    ->setFormat('pdf')
+    ->convert();
+```
+
+---
+
+# Dimensions & DPI
+
+## Setting Dimensions
+
+```php
+$converter->setDimensions(1024, 768, 150); // width, height, dpi
+
+$converter->setWidth(800);
+$converter->setHeight(600);
+$converter->setDpi(300);
+```
+
+## Chaining
+
+```php
+SvgConverter::open(resource_path('svg/logo.svg'))
+    ->setWidth(1024)
+    ->setHeight(1024)
+    ->setDpi(96)
+    ->setFormat('png')
+    ->toFile(storage_path('app/logo.png'));
+```
+
+---
+
+# Background
+
+## Setting Background Color
+
+```php
+$converter->setBackground('#ffffff');
+$converter->setBackground('rgb(255,0,0)');
+```
+
+## Background Opacity
+
+```php
+$converter->setBackgroundOpacity(0.5);
+```
+
+## Combined Example
+
+```php
+SvgConverter::open(resource_path('svg/logo.svg'))
+    ->setFormat('png')
+    ->setDimensions(512, 512)
+    ->setBackground('#ffffff')
+    ->setBackgroundOpacity(1.0)
+    ->toFile(storage_path('app/logo-white-bg.png'));
+```
+
+---
+
+# Output Methods
+
+## `convert()`
+
+```php
+$path = $converter->setFormat('png')->convert();
+$path = $converter->setFormat('png')->convert('output.png');
+```
+
+## `toFile()`
+
+```php
+$path = $converter->toFile(storage_path('app/output.png'));
+```
+
+## `toDisk()`
+
+```php
+$path = $converter->toDisk('s3', 'exports/image.png');
+```
+
+## `toStdout()`
+
+```php
+$binary = $converter->toStdout('png');
+```
+
+## `raw()`
+
+```php
+$result = $converter->raw();
+$result->successful();
+$result->failed();
+$result->output();
+$result->errorOutput();
+$result->exitCode();
+```
+
+## `buildCommand()`
+
+```php
+$command = $converter->setFormat('png')->setDimensions(512, 512)->buildCommand();
+```
+
+---
+
+# Disk Support
+
+## Reading from a Disk
+
+```php
+$converter = SvgConverter::openFromDisk('s3', 'designs/logo.svg');
+```
+
+## Writing to a Disk
+
+```php
+$path = SvgConverter::open(resource_path('svg/logo.svg'))
+    ->toDisk('s3', 'exports/logo.png');
+```
+
+## Full S3 Pipeline
+
+```php
+$converter = SvgConverter::openFromDisk('s3', 'uploads/design.svg');
+$converter->setFormat('png')->setDimensions(1024, 1024)->toDisk('s3', 'thumbnails/design.png');
+```
+
+---
+
+# Stdout Streaming
+
+## Basic Usage
+
+```php
+$binary = SvgConverter::open(resource_path('svg/logo.svg'))
+    ->setDimensions(512, 512)
+    ->toStdout('png');
+```
+
+## HTTP Response Streaming
+
+```php
+Route::get('/logo.png', function () {
+    $binary = SvgConverter::open(storage_path('app/logo.svg'))
+        ->setDimensions(512, 512)
+        ->toStdout('png');
+
+    return response($binary)
+        ->header('Content-Type', 'image/png')
+        ->header('Cache-Control', 'public, max-age=86400');
+});
+```
+
+---
+
+# Dynamic Options
+
+## `withOption()`
+
+```php
+$converter->withOption('custom-flag', 'value');
+```
+
+## `withFlag()`
+
+```php
+$converter->withFlag('some-flag');
+```
+
+## `withOptions()`
+
+```php
+$converter->withOptions([
+    'option-a' => 'value',
+    'flag-b',
+]);
+```
+
+## `timeout()`
+
+```php
+$converter->timeout(120);
+```
+
+---
+
+# Resvg Provider
+
+Resvg is a fast, lightweight SVG to PNG converter. It is the default provider.
+
+## Supported Formats
+
+PNG only.
+
+## Resvg-Specific Methods
+
+- `setZoom(float $zoom)` — Set zoom factor
+- `setShapeRendering(string $mode)` — `optimizeSpeed`, `crispEdges`, `geometricPrecision`
+- `setTextRendering(string $mode)` — Text rendering mode
+- `setImageRendering(string $mode)` — Image rendering mode
+- `setDefaultFontFamily(string $family)` — Default font family
+- `setDefaultFontSize(int $size)` — Default font size in pixels
+- `useFontFile(string $path)` — Use a specific font file
+- `useFontsDir(string $path)` — Load fonts from directory
+- `skipSystemFonts()` — Skip system fonts for faster startup
+- `setResourcesDir(string $path)` — Directory for resolving relative image paths
+
+---
+
+# Inkscape Provider
+
+Inkscape is a full-featured vector graphics editor with powerful CLI export capabilities.
+
+## Supported Formats
+
+PNG, PDF, SVG, PS, EPS, EMF, WMF.
+
+## Export Area
+
+- `exportAreaPage()` — Export full page
+- `exportAreaDrawing()` — Export drawing bounding box
+- `exportArea(float $x0, float $y0, float $x1, float $y1)` — Custom area
+- `exportAreaSnap()` — Snap to pixel values
+
+## Export Modifiers
+
+- `exportTextToPath()` — Convert text to paths
+- `exportPlainSvg()` — Plain SVG without Inkscape namespaces
+- `exportOverwrite()` — Overwrite input file
+- `exportMargin(float|int $margin)` — Add margin
+- `exportLatex()` — LaTeX companion file
+- `exportIgnoreFilters()` — Ignore SVG filters
+- `vacuumDefs()` — Remove unused defs
+
+## Format-Specific Options
+
+- `exportPdfVersion(string $version)` — PDF version (default: 1.4)
+- `exportPsLevel(int $level)` — PostScript level (default: 3)
+- `exportPngColorMode(string $mode)` — PNG color mode
+- `exportPngCompression(int $level)` — PNG compression 0-9
+- `exportPngAntialias(int $level)` — PNG antialiasing 0-3
+
+## Pages & Objects
+
+- `setPage(int|string $page)` — Export specific page
+- `firstPage()` — Export first page
+- `exportId(string $id, bool $idOnly = false)` — Export specific object
+- `query(?string $objectId = null)` — Query dimensions
+
+---
+
+# Error Handling
+
+All conversion errors throw `SvgConverterException`.
+
+```php
+use Laratusk\Larasvg\Exceptions\SvgConverterException;
+
+try {
+    SvgConverter::open(resource_path('svg/file.svg'))->setFormat('png')->convert();
+} catch (SvgConverterException $e) {
+    $e->getMessage();
+    $e->exitCode;
+    $e->output;
+    $e->errorOutput;
+    $e->getSummary();
+}
+```
+
+## Using `raw()` for Manual Error Handling
+
+```php
+$result = $converter->raw();
+if ($result->failed()) {
+    echo $result->errorOutput();
+}
+```
+
+---
+
+# Testing
+
+LaraSVG is built on Laravel's Process facade, making it fully testable with `Process::fake()`.
+
+```php
+use Illuminate\Support\Facades\Process;
+
+Process::fake();
+
+SvgConverter::open($svgPath)->setFormat('png')->convert();
+
+Process::assertRan(function ($process) {
+    return str_contains($process->command, 'resvg');
+});
+```
+
+## Faking Disk Operations
+
+```php
+Process::fake();
+Storage::fake('s3');
+
+Storage::disk('s3')->put('input.svg', '<svg xmlns="http://www.w3.org/2000/svg"/>');
+SvgConverter::openFromDisk('s3', 'input.svg')->toDisk('s3', 'output.png');
+Storage::disk('s3')->assertExists('output.png');
+```
+
+---
+
+# Facade API
+
+- `open(string $path): Provider` — Open local SVG file
+- `openFromDisk(string $disk, string $path): Provider` — Open from Laravel disk
+- `openFromContent(string $content, string $extension = 'svg'): Provider` — Open from string
+- `using(string $provider): SvgConverterManager` — Switch provider for next operation
+- `version(?string $provider = null): string` — Get provider version
+- `actionList(): string` — List Inkscape actions
+- `getBinary(?string $provider = null): string` — Get binary path
+- `getTimeout(?string $provider = null): int` — Get timeout
+- `getDefaultDisk(): string` — Get default disk
+
+---
+
+# Provider Interface
+
+```php
+interface Provider
+{
+    public function supportedFormats(): array;
+    public function version(): string;
+    public function setFormat(string $format): static;
+    public function setWidth(int $width): static;
+    public function setHeight(int $height): static;
+    public function setDpi(?int $dpi): static;
+    public function setDimensions(int $width, int $height, ?int $dpi = null): static;
+    public function setBackground(string $color): static;
+    public function setBackgroundOpacity(float $value): static;
+    public function convert(?string $exportName = null): string;
+    public function toFile(string $outputPath): string;
+    public function toDisk(string $disk, string $path, ?string $format = null): string;
+    public function toStdout(?string $format = 'png'): string;
+    public function raw(): ProcessResult;
+    public function buildCommand(): string;
+    public function timeout(int $seconds): static;
+    public function withOption(string $option, mixed $value): static;
+    public function withFlag(string $flag): static;
+    public function withOptions(array $options): static;
+    public function cleanup(): void;
+    public function addTempFile(string $path): void;
+    public function createTempFile(string $name): string;
+}
+```
+
+---
+
+# SvgConverterException
+
+```php
+public function __construct(
+    string $message = '',
+    public readonly string $output = '',
+    public readonly string $errorOutput = '',
+    public readonly int $exitCode = 1,
+    ?Throwable $previous = null,
+)
+```
+
+- `fromProcess(ProcessResult $result, string $command, string $provider): self`
+- `getSummary(): string`

@@ -5,6 +5,10 @@ export default defineConfig({
   description: 'A modern Laravel package for SVG conversion with multiple provider support.',
   base: '/',
 
+  sitemap: {
+    hostname: 'https://larasvg.laratusk.org',
+  },
+
   head: [
     ['link', { rel: 'icon', type: 'image/png', href: '/laratusk-512.png' }],
     ['meta', { property: 'og:type', content: 'website' }],
