@@ -102,10 +102,21 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: ['8.4']
-        laravel: ['12.*']
         include:
-          - laravel: '12.*'
+          - php: '8.2'
+            laravel: '10.*'
+            testbench: '8.*'
+          - php: '8.2'
+            laravel: '11.*'
+            testbench: '9.*'
+          - php: '8.3'
+            laravel: '11.*'
+            testbench: '9.*'
+          - php: '8.3'
+            laravel: '12.*'
+            testbench: '10.*'
+          - php: '8.4'
+            laravel: '12.*'
             testbench: '10.*'
 
     steps:

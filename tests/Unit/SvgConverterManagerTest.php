@@ -25,7 +25,6 @@ class SvgConverterManagerTest extends TestCase
         $this->testSvg = $this->createTempSvg();
     }
 
-    #[\Override]
     protected function tearDown(): void
     {
         if (file_exists($this->testSvg)) {
@@ -75,7 +74,7 @@ class SvgConverterManagerTest extends TestCase
 
         $expectedBinary = $this->app['config']->get('svg-converter.providers.resvg.binary');
         $this->assertEquals($expectedBinary, $converter->binary);
-        $this->assertEquals(60, $converter->timeout);
+        $this->assertEquals(60, $converter->getTimeout());
     }
 
     #[Test]
@@ -85,7 +84,7 @@ class SvgConverterManagerTest extends TestCase
 
         $expectedBinary = $this->app['config']->get('svg-converter.providers.inkscape.binary');
         $this->assertEquals($expectedBinary, $converter->binary);
-        $this->assertEquals(60, $converter->timeout);
+        $this->assertEquals(60, $converter->getTimeout());
     }
 
     #[Test]

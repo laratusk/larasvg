@@ -22,8 +22,8 @@ LaraSVG is a modern Laravel package for SVG conversion with multiple provider su
 
 ## Requirements
 
-- PHP 8.4+
-- Laravel 12+
+- PHP 8.2+
+- Laravel 10.x, 11.x, or 12.x
 - At least one converter installed:
   - [Resvg](https://github.com/linebender/resvg) (recommended for PNG)
   - [Inkscape](https://inkscape.org/) 1.0+ (for PDF, EPS, PS, and other formats)

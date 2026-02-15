@@ -16,7 +16,7 @@ abstract class AbstractConverter implements Provider
      *
      * @var array<string, mixed>
      */
-    public private(set) array $options = [];
+    protected array $options = [];
 
     /**
      * The export format (e.g. png, pdf, svg).
@@ -48,7 +48,7 @@ abstract class AbstractConverter implements Provider
     public function __construct(
         public readonly string $inputPath,
         public readonly string $binary,
-        public private(set) int $timeout = 60,
+        protected int $timeout = 60,
     ) {}
 
     public function __destruct()
@@ -65,6 +65,24 @@ abstract class AbstractConverter implements Provider
      * Apply export options to the CLI command (provider-specific).
      */
     abstract protected function applyExportOptions(string $exportPath): void;
+
+    /**
+     * Get the CLI options.
+     *
+     * @return array<string, mixed>
+     */
+    public function getOptions(): array
+    {
+        return $this->options;
+    }
+
+    /**
+     * Get the process timeout in seconds.
+     */
+    public function getTimeout(): int
+    {
+        return $this->timeout;
+    }
 
     // -------------------------------------------------------------------------
     // Format & Dimensions

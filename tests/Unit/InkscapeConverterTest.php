@@ -18,7 +18,6 @@ class InkscapeConverterTest extends TestCase
         $this->testSvg = $this->createTempSvg();
     }
 
-    #[\Override]
     protected function tearDown(): void
     {
         if (file_exists($this->testSvg)) {
@@ -49,7 +48,7 @@ class InkscapeConverterTest extends TestCase
         $converter = new InkscapeConverter($this->testSvg, 'inkscape', 60);
         $converter->setFormat('png');
 
-        $this->assertEmpty($converter->options);
+        $this->assertEmpty($converter->getOptions());
     }
 
     #[Test]
@@ -68,9 +67,9 @@ class InkscapeConverterTest extends TestCase
         $converter = new InkscapeConverter($this->testSvg, 'inkscape', 60);
         $converter->setDimensions(800, 600, 150);
 
-        $this->assertEquals(800, $converter->options['export-width']);
-        $this->assertEquals(600, $converter->options['export-height']);
-        $this->assertEquals(150, $converter->options['export-dpi']);
+        $this->assertEquals(800, $converter->getOptions()['export-width']);
+        $this->assertEquals(600, $converter->getOptions()['export-height']);
+        $this->assertEquals(150, $converter->getOptions()['export-dpi']);
     }
 
     #[Test]
@@ -80,8 +79,8 @@ class InkscapeConverterTest extends TestCase
         $converter->setBackground('#ffffff');
         $converter->setBackgroundOpacity(0.5);
 
-        $this->assertEquals('#ffffff', $converter->options['export-background']);
-        $this->assertEquals(0.5, $converter->options['export-background-opacity']);
+        $this->assertEquals('#ffffff', $converter->getOptions()['export-background']);
+        $this->assertEquals(0.5, $converter->getOptions()['export-background-opacity']);
     }
 
     #[Test]
@@ -90,7 +89,7 @@ class InkscapeConverterTest extends TestCase
         $converter = new InkscapeConverter($this->testSvg, 'inkscape', 60);
         $converter->setPage(2);
 
-        $this->assertEquals(2, $converter->options['pages']);
+        $this->assertEquals(2, $converter->getOptions()['pages']);
     }
 
     #[Test]
@@ -99,7 +98,7 @@ class InkscapeConverterTest extends TestCase
         $converter = new InkscapeConverter($this->testSvg, 'inkscape', 60);
         $converter->firstPage();
 
-        $this->assertEquals(1, $converter->options['pages']);
+        $this->assertEquals(1, $converter->getOptions()['pages']);
     }
 
     #[Test]
@@ -108,8 +107,8 @@ class InkscapeConverterTest extends TestCase
         $converter = new InkscapeConverter($this->testSvg, 'inkscape', 60);
         $converter->exportId('rect123');
 
-        $this->assertEquals('rect123', $converter->options['export-id']);
-        $this->assertArrayNotHasKey('export-id-only', $converter->options);
+        $this->assertEquals('rect123', $converter->getOptions()['export-id']);
+        $this->assertArrayNotHasKey('export-id-only', $converter->getOptions());
     }
 
     #[Test]
@@ -118,8 +117,8 @@ class InkscapeConverterTest extends TestCase
         $converter = new InkscapeConverter($this->testSvg, 'inkscape', 60);
         $converter->exportId('rect123', idOnly: true);
 
-        $this->assertEquals('rect123', $converter->options['export-id']);
-        $this->assertNull($converter->options['export-id-only']);
+        $this->assertEquals('rect123', $converter->getOptions()['export-id']);
+        $this->assertNull($converter->getOptions()['export-id-only']);
     }
 
     #[Test]
@@ -127,11 +126,11 @@ class InkscapeConverterTest extends TestCase
     {
         $converter = new InkscapeConverter($this->testSvg, 'inkscape', 60);
         $converter->exportAreaPage();
-        $this->assertArrayHasKey('export-area-page', $converter->options);
+        $this->assertArrayHasKey('export-area-page', $converter->getOptions());
 
         $converter2 = new InkscapeConverter($this->testSvg, 'inkscape', 60);
         $converter2->exportAreaDrawing();
-        $this->assertArrayHasKey('export-area-drawing', $converter2->options);
+        $this->assertArrayHasKey('export-area-drawing', $converter2->getOptions());
     }
 
     #[Test]
@@ -140,7 +139,7 @@ class InkscapeConverterTest extends TestCase
         $converter = new InkscapeConverter($this->testSvg, 'inkscape', 60);
         $converter->exportArea(0, 0, 100, 100);
 
-        $this->assertEquals('0:0:100:100', $converter->options['export-area']);
+        $this->assertEquals('0:0:100:100', $converter->getOptions()['export-area']);
     }
 
     #[Test]
@@ -149,7 +148,7 @@ class InkscapeConverterTest extends TestCase
         $converter = new InkscapeConverter($this->testSvg, 'inkscape', 60);
         $converter->exportAreaSnap();
 
-        $this->assertArrayHasKey('export-area-snap', $converter->options);
+        $this->assertArrayHasKey('export-area-snap', $converter->getOptions());
     }
 
     #[Test]
@@ -158,16 +157,16 @@ class InkscapeConverterTest extends TestCase
         $converter = new InkscapeConverter($this->testSvg, 'inkscape', 60);
 
         $converter->exportTextToPath();
-        $this->assertArrayHasKey('export-text-to-path', $converter->options);
+        $this->assertArrayHasKey('export-text-to-path', $converter->getOptions());
 
         $converter->exportPlainSvg();
-        $this->assertArrayHasKey('export-plain-svg', $converter->options);
+        $this->assertArrayHasKey('export-plain-svg', $converter->getOptions());
 
         $converter->exportOverwrite();
-        $this->assertArrayHasKey('export-overwrite', $converter->options);
+        $this->assertArrayHasKey('export-overwrite', $converter->getOptions());
 
         $converter->vacuumDefs();
-        $this->assertArrayHasKey('vacuum-defs', $converter->options);
+        $this->assertArrayHasKey('vacuum-defs', $converter->getOptions());
     }
 
     #[Test]
@@ -176,7 +175,7 @@ class InkscapeConverterTest extends TestCase
         $converter = new InkscapeConverter($this->testSvg, 'inkscape', 60);
         $converter->exportPdfVersion('1.5');
 
-        $this->assertEquals('1.5', $converter->options['export-pdf-version']);
+        $this->assertEquals('1.5', $converter->getOptions()['export-pdf-version']);
     }
 
     #[Test]
@@ -185,7 +184,7 @@ class InkscapeConverterTest extends TestCase
         $converter = new InkscapeConverter($this->testSvg, 'inkscape', 60);
         $converter->exportPsLevel(2);
 
-        $this->assertEquals(2, $converter->options['export-ps-level']);
+        $this->assertEquals(2, $converter->getOptions()['export-ps-level']);
     }
 
     #[Test]
@@ -194,13 +193,13 @@ class InkscapeConverterTest extends TestCase
         $converter = new InkscapeConverter($this->testSvg, 'inkscape', 60);
 
         $converter->exportPngColorMode('RGBA_8');
-        $this->assertEquals('RGBA_8', $converter->options['export-png-color-mode']);
+        $this->assertEquals('RGBA_8', $converter->getOptions()['export-png-color-mode']);
 
         $converter->exportPngCompression(9);
-        $this->assertEquals(9, $converter->options['export-png-compression']);
+        $this->assertEquals(9, $converter->getOptions()['export-png-compression']);
 
         $converter->exportPngAntialias(3);
-        $this->assertEquals(3, $converter->options['export-png-antialias']);
+        $this->assertEquals(3, $converter->getOptions()['export-png-antialias']);
     }
 
     #[Test]
@@ -209,7 +208,7 @@ class InkscapeConverterTest extends TestCase
         $converter = new InkscapeConverter($this->testSvg, 'inkscape', 60);
         $converter->exportMargin(10);
 
-        $this->assertEquals(10, $converter->options['export-margin']);
+        $this->assertEquals(10, $converter->getOptions()['export-margin']);
     }
 
     #[Test]
@@ -218,7 +217,7 @@ class InkscapeConverterTest extends TestCase
         $converter = new InkscapeConverter($this->testSvg, 'inkscape', 60);
         $converter->exportLatex();
 
-        $this->assertArrayHasKey('export-latex', $converter->options);
+        $this->assertArrayHasKey('export-latex', $converter->getOptions());
     }
 
     #[Test]
@@ -227,7 +226,7 @@ class InkscapeConverterTest extends TestCase
         $converter = new InkscapeConverter($this->testSvg, 'inkscape', 60);
         $converter->exportIgnoreFilters();
 
-        $this->assertArrayHasKey('export-ignore-filters', $converter->options);
+        $this->assertArrayHasKey('export-ignore-filters', $converter->getOptions());
     }
 
     #[Test]

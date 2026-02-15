@@ -10,7 +10,7 @@ class ResvgConverter extends AbstractConverter
     /**
      * Supported export formats for Resvg.
      */
-    public const array SUPPORTED_FORMATS = ['png'];
+    public const SUPPORTED_FORMATS = ['png'];
 
     /**
      * The output path for the positional argument.
@@ -79,7 +79,6 @@ class ResvgConverter extends AbstractConverter
      * Convert and return the raw output (stdout).
      * Resvg uses `-c` flag to output to stdout.
      */
-    #[\Override]
     public function toStdout(?string $format = 'png'): string
     {
         if ($format) {
@@ -186,31 +185,26 @@ class ResvgConverter extends AbstractConverter
     // Option name overrides for Resvg
     // -------------------------------------------------------------------------
 
-    #[\Override]
     protected function widthOption(): string
     {
         return 'width';
     }
 
-    #[\Override]
     protected function heightOption(): string
     {
         return 'height';
     }
 
-    #[\Override]
     protected function dpiOption(): string
     {
         return 'dpi';
     }
 
-    #[\Override]
     protected function backgroundOption(): string
     {
         return 'background';
     }
 
-    #[\Override]
     protected function backgroundOpacityOption(): string
     {
         return 'background-opacity';

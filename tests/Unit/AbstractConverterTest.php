@@ -20,7 +20,6 @@ class AbstractConverterTest extends TestCase
         $this->testSvg = $this->createTempSvg();
     }
 
-    #[\Override]
     protected function tearDown(): void
     {
         if (file_exists($this->testSvg)) {
@@ -36,8 +35,8 @@ class AbstractConverterTest extends TestCase
 
         $this->assertEquals($this->testSvg, $converter->inputPath);
         $this->assertEquals('/usr/bin/resvg', $converter->binary);
-        $this->assertEquals(60, $converter->timeout);
-        $this->assertEmpty($converter->options);
+        $this->assertEquals(60, $converter->getTimeout());
+        $this->assertEmpty($converter->getOptions());
     }
 
     #[Test]
@@ -46,9 +45,9 @@ class AbstractConverterTest extends TestCase
         $converter = new ResvgConverter($this->testSvg, 'resvg', 60);
         $converter->setDimensions(800, 600, 150);
 
-        $this->assertEquals(800, $converter->options['width']);
-        $this->assertEquals(600, $converter->options['height']);
-        $this->assertEquals(150, $converter->options['dpi']);
+        $this->assertEquals(800, $converter->getOptions()['width']);
+        $this->assertEquals(600, $converter->getOptions()['height']);
+        $this->assertEquals(150, $converter->getOptions()['dpi']);
     }
 
     #[Test]
@@ -57,7 +56,7 @@ class AbstractConverterTest extends TestCase
         $converter = new ResvgConverter($this->testSvg, 'resvg', 60);
         $converter->setWidth(1920);
 
-        $this->assertEquals(1920, $converter->options['width']);
+        $this->assertEquals(1920, $converter->getOptions()['width']);
     }
 
     #[Test]
@@ -66,7 +65,7 @@ class AbstractConverterTest extends TestCase
         $converter = new ResvgConverter($this->testSvg, 'resvg', 60);
         $converter->setHeight(1080);
 
-        $this->assertEquals(1080, $converter->options['height']);
+        $this->assertEquals(1080, $converter->getOptions()['height']);
     }
 
     #[Test]
@@ -75,7 +74,7 @@ class AbstractConverterTest extends TestCase
         $converter = new ResvgConverter($this->testSvg, 'resvg', 60);
         $converter->setDpi(300);
 
-        $this->assertEquals(300, $converter->options['dpi']);
+        $this->assertEquals(300, $converter->getOptions()['dpi']);
     }
 
     #[Test]
@@ -84,7 +83,7 @@ class AbstractConverterTest extends TestCase
         $converter = new ResvgConverter($this->testSvg, 'resvg', 60);
         $converter->setDpi(null);
 
-        $this->assertArrayNotHasKey('dpi', $converter->options);
+        $this->assertArrayNotHasKey('dpi', $converter->getOptions());
     }
 
     #[Test]
@@ -93,7 +92,7 @@ class AbstractConverterTest extends TestCase
         $converter = new ResvgConverter($this->testSvg, 'resvg', 60);
         $converter->setBackground('#ff007f');
 
-        $this->assertEquals('#ff007f', $converter->options['background']);
+        $this->assertEquals('#ff007f', $converter->getOptions()['background']);
     }
 
     #[Test]
@@ -102,7 +101,7 @@ class AbstractConverterTest extends TestCase
         $converter = new ResvgConverter($this->testSvg, 'resvg', 60);
         $converter->setBackground('rgb(255,0,128)');
 
-        $this->assertEquals('rgb(255,0,128)', $converter->options['background']);
+        $this->assertEquals('rgb(255,0,128)', $converter->getOptions()['background']);
     }
 
     #[Test]
@@ -121,7 +120,7 @@ class AbstractConverterTest extends TestCase
         $converter = new ResvgConverter($this->testSvg, 'resvg', 60);
         $converter->setBackgroundOpacity(0.5);
 
-        $this->assertEquals(0.5, $converter->options['background-opacity']);
+        $this->assertEquals(0.5, $converter->getOptions()['background-opacity']);
     }
 
     #[Test]
@@ -152,8 +151,8 @@ class AbstractConverterTest extends TestCase
         $converter->withOption('custom-option', 'custom-value');
         $converter->withFlag('custom-flag');
 
-        $this->assertEquals('custom-value', $converter->options['custom-option']);
-        $this->assertNull($converter->options['custom-flag']);
+        $this->assertEquals('custom-value', $converter->getOptions()['custom-option']);
+        $this->assertNull($converter->getOptions()['custom-flag']);
     }
 
     #[Test]
@@ -167,9 +166,9 @@ class AbstractConverterTest extends TestCase
             'skip-system-fonts',
         ]);
 
-        $this->assertEquals(500, $converter->options['width']);
-        $this->assertEquals(300, $converter->options['height']);
-        $this->assertNull($converter->options['skip-system-fonts']);
+        $this->assertEquals(500, $converter->getOptions()['width']);
+        $this->assertEquals(300, $converter->getOptions()['height']);
+        $this->assertNull($converter->getOptions()['skip-system-fonts']);
     }
 
     #[Test]
@@ -178,7 +177,7 @@ class AbstractConverterTest extends TestCase
         $converter = new ResvgConverter($this->testSvg, 'resvg', 60);
         $converter->timeout(120);
 
-        $this->assertEquals(120, $converter->timeout);
+        $this->assertEquals(120, $converter->getTimeout());
     }
 
     #[Test]
@@ -194,11 +193,11 @@ class AbstractConverterTest extends TestCase
             ->timeout(120);
 
         $this->assertInstanceOf(ResvgConverter::class, $result);
-        $this->assertEquals(1024, $result->options['width']);
-        $this->assertEquals(1024, $result->options['height']);
-        $this->assertEquals(96, $result->options['dpi']);
-        $this->assertEquals('#ffffff', $result->options['background']);
-        $this->assertEquals(1.0, $result->options['background-opacity']);
+        $this->assertEquals(1024, $result->getOptions()['width']);
+        $this->assertEquals(1024, $result->getOptions()['height']);
+        $this->assertEquals(96, $result->getOptions()['dpi']);
+        $this->assertEquals('#ffffff', $result->getOptions()['background']);
+        $this->assertEquals(1.0, $result->getOptions()['background-opacity']);
     }
 
     #[Test]
@@ -232,17 +231,17 @@ class AbstractConverterTest extends TestCase
 
         // With hash
         $converter->setBackground('#ff0000');
-        $this->assertEquals('#ff0000', $converter->options['background']);
+        $this->assertEquals('#ff0000', $converter->getOptions()['background']);
 
         // Short hex
         $converter2 = new ResvgConverter($this->testSvg, 'resvg', 60);
         $converter2->setBackground('#fff');
-        $this->assertEquals('#fff', $converter2->options['background']);
+        $this->assertEquals('#fff', $converter2->getOptions()['background']);
 
         // Without hash
         $converter3 = new ResvgConverter($this->testSvg, 'resvg', 60);
         $converter3->setBackground('ff0000');
-        $this->assertEquals('ff0000', $converter3->options['background']);
+        $this->assertEquals('ff0000', $converter3->getOptions()['background']);
     }
 
     #[Test]
@@ -263,8 +262,8 @@ class AbstractConverterTest extends TestCase
 
         $this->assertSame($this->testSvg, $converter->inputPath);
         $this->assertSame('/usr/bin/resvg', $converter->binary);
-        $this->assertSame(120, $converter->timeout);
-        $this->assertIsArray($converter->options);
+        $this->assertSame(120, $converter->getTimeout());
+        $this->assertIsArray($converter->getOptions());
     }
 
     #[Test]
@@ -293,7 +292,7 @@ class AbstractConverterTest extends TestCase
         $converter = new InkscapeConverter($this->testSvg, 'inkscape', 60);
         $converter->setWidth(800);
 
-        $this->assertEquals(800, $converter->options['export-width']);
+        $this->assertEquals(800, $converter->getOptions()['export-width']);
     }
 
     #[Test]
@@ -302,7 +301,7 @@ class AbstractConverterTest extends TestCase
         $converter = new ResvgConverter($this->testSvg, 'resvg', 60);
         $converter->setWidth(800);
 
-        $this->assertEquals(800, $converter->options['width']);
+        $this->assertEquals(800, $converter->getOptions()['width']);
     }
 
     #[Test]
