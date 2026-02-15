@@ -5,6 +5,9 @@ parameters:
     paths:
         - src/
 
+    excludePaths:
+        - try.php
+
     level: max
 
     tmpDir: .phpstan.cache
