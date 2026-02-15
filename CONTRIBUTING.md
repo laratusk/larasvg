@@ -6,7 +6,7 @@ Thank you for considering contributing to LaraSVG! This guide will help you get 
 
 ### Prerequisites
 
-- PHP 8.4+
+- PHP 8.2+
 - Composer
 - (Optional) [Resvg](https://github.com/linebender/resvg) — for running integration tests
 - (Optional) [Inkscape](https://inkscape.org/) 1.0+ — for running integration tests
