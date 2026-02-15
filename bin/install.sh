@@ -97,6 +97,18 @@ get_rsvg_convert_path() {
     command -v rsvg-convert 2>/dev/null || echo ""
 }
 
+get_cairosvg_version() {
+    if command -v cairosvg &>/dev/null; then
+        cairosvg --version 2>/dev/null | head -1 || echo ""
+    else
+        echo ""
+    fi
+}
+
+get_cairosvg_path() {
+    command -v cairosvg 2>/dev/null || echo ""
+}
+
 # ---------------------------------------------------------------------------
 #  --check: JSON output for artisan command
 # ---------------------------------------------------------------------------
@@ -104,9 +116,11 @@ if [ "${1:-}" = "--check" ]; then
     inkscape_version=$(get_inkscape_version)
     resvg_version=$(get_resvg_version)
     rsvg_convert_version=$(get_rsvg_convert_version)
+    cairosvg_version=$(get_cairosvg_version)
     inkscape_path=$(get_inkscape_path)
     resvg_path=$(get_resvg_path)
     rsvg_convert_path=$(get_rsvg_convert_path)
+    cairosvg_path=$(get_cairosvg_path)
     os_info=$(detect_os)
 
     cat <<EOF
@@ -127,6 +141,11 @@ if [ "${1:-}" = "--check" ]; then
         "installed": $([ -n "$rsvg_convert_version" ] && echo "true" || echo "false"),
         "version": "$rsvg_convert_version",
         "path": "$rsvg_convert_path"
+    },
+    "cairosvg": {
+        "installed": $([ -n "$cairosvg_version" ] && echo "true" || echo "false"),
+        "version": "$cairosvg_version",
+        "path": "$cairosvg_path"
     }
 }
 EOF
@@ -186,6 +205,15 @@ print_status() {
         echo -e "                 ${DIM}$(get_rsvg_convert_path)${NC}"
     else
         echo -e "  ${RED}○${NC} Rsvg-convert ${RED}not installed${NC}"
+    fi
+
+    local cairosvg_version
+    cairosvg_version=$(get_cairosvg_version)
+    if [ -n "$cairosvg_version" ]; then
+        echo -e "  ${GREEN}●${NC} CairoSVG     ${GREEN}installed${NC}  ${DIM}${cairosvg_version}${NC}"
+        echo -e "                 ${DIM}$(get_cairosvg_path)${NC}"
+    else
+        echo -e "  ${RED}○${NC} CairoSVG     ${RED}not installed${NC}"
     fi
 
     echo ""
@@ -382,6 +410,87 @@ install_rsvg_convert() {
     fi
 }
 
+install_cairosvg() {
+    local os_info
+    os_info=$(detect_os)
+    local distro="${os_info##*:}"
+
+    echo -e "  ${BLUE}Installing CairoSVG...${NC}"
+    echo ""
+
+    case "$distro" in
+        macos)
+            if ! command -v brew &>/dev/null; then
+                echo -e "  ${RED}Homebrew not found.${NC}"
+                echo -e "  Install Homebrew first: ${CYAN}https://brew.sh${NC}"
+                exit 1
+            fi
+            echo -e "  ${DIM}Installing system dependencies via Homebrew...${NC}"
+            brew install cairo libffi
+            if command -v pipx &>/dev/null; then
+                echo -e "  ${DIM}Installing CairoSVG via pipx...${NC}"
+                pipx install cairosvg
+            else
+                echo -e "  ${DIM}Installing pipx via Homebrew...${NC}"
+                brew install pipx
+                pipx ensurepath
+                echo -e "  ${DIM}Installing CairoSVG via pipx...${NC}"
+                pipx install cairosvg
+            fi
+            ;;
+        debian)
+            echo -e "  ${DIM}Installing system dependencies via apt...${NC}"
+            sudo apt-get update -qq
+            sudo apt-get install -y libcairo2-dev pkg-config python3-dev python3-pip
+            echo -e "  ${DIM}Installing CairoSVG via pip3...${NC}"
+            pip3 install cairosvg
+            ;;
+        fedora)
+            echo -e "  ${DIM}Installing system dependencies via dnf...${NC}"
+            sudo dnf install -y cairo-devel pkg-config python3-devel python3-pip
+            echo -e "  ${DIM}Installing CairoSVG via pip3...${NC}"
+            pip3 install cairosvg
+            ;;
+        arch)
+            echo -e "  ${DIM}Installing CairoSVG via pacman or pip3...${NC}"
+            if sudo pacman -Syu --noconfirm python-cairosvg 2>/dev/null; then
+                echo -e "  ${GREEN}Installed via pacman.${NC}"
+            else
+                sudo pacman -Syu --noconfirm cairo pkgconf python-pip
+                pip3 install cairosvg
+            fi
+            ;;
+        alpine)
+            echo -e "  ${DIM}Installing system dependencies via apk...${NC}"
+            sudo apk add cairo-dev py3-pip
+            echo -e "  ${DIM}Installing CairoSVG via pip3...${NC}"
+            pip3 install cairosvg
+            ;;
+        *)
+            echo -e "  ${RED}Unsupported OS for automatic installation.${NC}"
+            echo -e "  Please install CairoSVG manually:"
+            echo -e "    macOS:        ${CYAN}brew install cairo libffi && pip3 install cairosvg${NC}"
+            echo -e "    Ubuntu/Debian:${CYAN}sudo apt install libcairo2-dev pkg-config python3-dev && pip3 install cairosvg${NC}"
+            echo -e "    Fedora/RHEL:  ${CYAN}sudo dnf install cairo-devel pkg-config python3-devel && pip3 install cairosvg${NC}"
+            echo -e "    Arch:         ${CYAN}sudo pacman -S python-cairosvg${NC}"
+            echo -e "    Alpine:       ${CYAN}apk add cairo-dev && pip3 install cairosvg${NC}"
+            exit 1
+            ;;
+    esac
+
+    echo ""
+    local version
+    version=$(get_cairosvg_version)
+    if [ -n "$version" ]; then
+        echo -e "  ${GREEN}CairoSVG installed successfully!${NC}"
+        echo -e "  ${DIM}${version}${NC}"
+        echo -e "  ${DIM}$(get_cairosvg_path)${NC}"
+    else
+        echo -e "  ${RED}Installation may have failed. Please check the output above.${NC}"
+        exit 1
+    fi
+}
+
 # ---------------------------------------------------------------------------
 #  Main
 # ---------------------------------------------------------------------------
@@ -425,6 +534,19 @@ case "${1:-}" in
         install_rsvg_convert
         echo ""
         ;;
+    cairosvg)
+        print_header
+        existing=$(get_cairosvg_version)
+        if [ -n "$existing" ]; then
+            echo -e "  ${GREEN}CairoSVG is already installed.${NC}"
+            echo -e "  ${DIM}${existing}${NC}"
+            echo -e "  ${DIM}$(get_cairosvg_path)${NC}"
+            echo ""
+            exit 0
+        fi
+        install_cairosvg
+        echo ""
+        ;;
     "")
         print_header
         print_status
@@ -432,12 +554,13 @@ case "${1:-}" in
         echo -e "    ${CYAN}./install.sh inkscape${NC}       Install Inkscape"
         echo -e "    ${CYAN}./install.sh resvg${NC}          Install Resvg"
         echo -e "    ${CYAN}./install.sh rsvg-convert${NC}   Install rsvg-convert (librsvg)"
+        echo -e "    ${CYAN}./install.sh cairosvg${NC}       Install CairoSVG"
         echo -e "    ${CYAN}./install.sh --check${NC}        JSON status (for artisan)"
         echo ""
         ;;
     *)
         echo -e "  ${RED}Unknown provider: ${1}${NC}"
-        echo -e "  Supported providers: ${CYAN}inkscape${NC}, ${CYAN}resvg${NC}, ${CYAN}rsvg-convert${NC}"
+        echo -e "  Supported providers: ${CYAN}inkscape${NC}, ${CYAN}resvg${NC}, ${CYAN}rsvg-convert${NC}, ${CYAN}cairosvg${NC}"
         exit 1
         ;;
 esac

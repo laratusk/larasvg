@@ -11,6 +11,13 @@ use Laratusk\Larasvg\Exceptions\SvgConverterException;
 abstract class AbstractConverter implements Provider
 {
     /**
+     * Supported export formats. Override in each concrete converter.
+     *
+     * @var array<string>
+     */
+    public const SUPPORTED_FORMATS = [];
+
+    /**
      * CLI options as key => value pairs.
      * Keys without values (flags) use null.
      *
@@ -39,6 +46,12 @@ abstract class AbstractConverter implements Provider
      * @var array<int, string>
      */
     protected array $tempFiles = [];
+
+    /**
+     * The output file path used by converters that write to a file argument.
+     * Inkscape does not use this — it writes the path into --export-filename instead.
+     */
+    protected ?string $outputPath = null;
 
     /**
      * Whether cleanup has already been performed.
@@ -82,6 +95,30 @@ abstract class AbstractConverter implements Provider
     public function getTimeout(): int
     {
         return $this->timeout;
+    }
+
+    /**
+     * Get the list of supported output formats.
+     *
+     * @return array<string>
+     */
+    public function supportedFormats(): array
+    {
+        return static::SUPPORTED_FORMATS;
+    }
+
+    /**
+     * Get the provider version string.
+     */
+    public function version(): string
+    {
+        $result = Process::timeout(10)->run(escapeshellarg($this->binary).' --version');
+
+        if ($result->failed()) {
+            throw SvgConverterException::fromProcess($result, "{$this->binary} --version", $this->providerName());
+        }
+
+        return trim($result->output());
     }
 
     // -------------------------------------------------------------------------

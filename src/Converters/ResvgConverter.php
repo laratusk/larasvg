@@ -2,36 +2,12 @@
 
 namespace Laratusk\Larasvg\Converters;
 
-use Illuminate\Support\Facades\Process;
-use Laratusk\Larasvg\Exceptions\SvgConverterException;
-
 class ResvgConverter extends AbstractConverter
 {
     /**
      * Supported export formats for Resvg.
      */
     public const SUPPORTED_FORMATS = ['png'];
-
-    /**
-     * The output path for the positional argument.
-     */
-    protected ?string $outputPath = null;
-
-    public function supportedFormats(): array
-    {
-        return self::SUPPORTED_FORMATS;
-    }
-
-    public function version(): string
-    {
-        $result = Process::timeout(10)->run(escapeshellarg($this->binary).' --version');
-
-        if ($result->failed()) {
-            throw SvgConverterException::fromProcess($result, "{$this->binary} --version", $this->providerName());
-        }
-
-        return trim($result->output());
-    }
 
     // -------------------------------------------------------------------------
     // Command Building

@@ -32,12 +32,20 @@ abstract class TestCase extends OrchestraTestCase
     protected function defineEnvironment($app): void
     {
         $app['config']->set('svg-converter.default', 'resvg');
+        $app['config']->set('svg-converter.drivers', [
+            'resvg' => \Laratusk\Larasvg\Converters\ResvgConverter::class,
+            'inkscape' => \Laratusk\Larasvg\Converters\InkscapeConverter::class,
+            'rsvg-convert' => \Laratusk\Larasvg\Converters\RsvgConvertConverter::class,
+            'cairosvg' => \Laratusk\Larasvg\Converters\CairosvgConverter::class,
+        ]);
         $app['config']->set('svg-converter.providers.resvg.binary', env('RESVG_PATH', 'resvg'));
         $app['config']->set('svg-converter.providers.resvg.timeout', 60);
         $app['config']->set('svg-converter.providers.inkscape.binary', env('INKSCAPE_PATH', 'inkscape'));
         $app['config']->set('svg-converter.providers.inkscape.timeout', 60);
         $app['config']->set('svg-converter.providers.rsvg-convert.binary', env('RSVG_CONVERT_PATH', 'rsvg-convert'));
         $app['config']->set('svg-converter.providers.rsvg-convert.timeout', 60);
+        $app['config']->set('svg-converter.providers.cairosvg.binary', env('CAIROSVG_PATH', 'cairosvg'));
+        $app['config']->set('svg-converter.providers.cairosvg.timeout', 60);
         $app['config']->set('svg-converter.default_disk', 'local');
     }
 

@@ -60,6 +60,7 @@ export default defineConfig({
           { text: 'Resvg', link: '/providers/resvg' },
           { text: 'Inkscape', link: '/providers/inkscape' },
           { text: 'Rsvg-convert', link: '/providers/rsvg-convert' },
+          { text: 'CairoSVG', link: '/providers/cairosvg' },
         ],
       },
       {
@@ -68,6 +69,7 @@ export default defineConfig({
           { text: 'Error Handling', link: '/advanced/error-handling' },
           { text: 'Testing', link: '/advanced/testing' },
           { text: 'Artisan Commands', link: '/advanced/artisan-commands' },
+          { text: 'Custom Drivers', link: '/advanced/custom-drivers' },
         ],
       },
       {

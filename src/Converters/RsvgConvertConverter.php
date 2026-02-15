@@ -2,7 +2,6 @@
 
 namespace Laratusk\Larasvg\Converters;
 
-use Illuminate\Support\Facades\Process;
 use Laratusk\Larasvg\Exceptions\SvgConverterException;
 
 class RsvgConvertConverter extends AbstractConverter
@@ -13,11 +12,6 @@ class RsvgConvertConverter extends AbstractConverter
     public const SUPPORTED_FORMATS = ['png', 'pdf', 'ps', 'eps', 'svg'];
 
     /**
-     * The output path for the -o flag.
-     */
-    protected ?string $outputPath = null;
-
-    /**
      * Background color stored for combining with opacity.
      */
     protected ?string $backgroundColor = null;
@@ -26,22 +20,6 @@ class RsvgConvertConverter extends AbstractConverter
      * Background opacity for combining with color.
      */
     protected ?float $backgroundOpacity = null;
-
-    public function supportedFormats(): array
-    {
-        return self::SUPPORTED_FORMATS;
-    }
-
-    public function version(): string
-    {
-        $result = Process::timeout(10)->run(escapeshellarg($this->binary).' --version');
-
-        if ($result->failed()) {
-            throw SvgConverterException::fromProcess($result, "{$this->binary} --version", $this->providerName());
-        }
-
-        return trim($result->output());
-    }
 
     // -------------------------------------------------------------------------
     // Command Building

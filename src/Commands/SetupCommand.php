@@ -16,7 +16,7 @@ class SetupCommand extends Command
 {
     protected $signature = 'larasvg:setup';
 
-    protected $description = 'Install and configure SVG conversion providers (Inkscape, Resvg, Rsvg-convert)';
+    protected $description = 'Install and configure SVG conversion providers (Inkscape, Resvg, Rsvg-convert, CairoSVG)';
 
     /**
      * @var array<string, array{installed: bool, version: string, path: string}>
@@ -107,7 +107,7 @@ class SetupCommand extends Command
             return null;
         }
 
-        foreach (['inkscape', 'resvg', 'rsvg-convert'] as $name) {
+        foreach (['inkscape', 'resvg', 'rsvg-convert', 'cairosvg'] as $name) {
             if (isset($status[$name]) && is_array($status[$name])) {
                 /** @var array{installed?: bool, version?: string, path?: string} $providerData */
                 $providerData = $status[$name];
@@ -170,6 +170,7 @@ class SetupCommand extends Command
                     'inkscape' => 'PNG, PDF, PS, EPS, EMF, WMF',
                     'resvg' => 'PNG — fast, lightweight',
                     'rsvg-convert' => 'PNG, PDF, PS, EPS — lightweight, widely available',
+                    'cairosvg' => 'PNG, PDF, PS, SVG — Python-based, Cairo 2D library',
                     default => '',
                 };
                 $options[$name] = "{$label} — {$formats}";
@@ -210,6 +211,7 @@ class SetupCommand extends Command
     {
         return match ($provider) {
             'rsvg-convert' => 'Rsvg-convert',
+            'cairosvg' => 'CairoSVG',
             default => ucfirst($provider),
         };
     }
@@ -258,6 +260,7 @@ class SetupCommand extends Command
             'inkscape' => 'SVG_CONVERTER_DRIVER=inkscape',
             'resvg' => 'SVG_CONVERTER_DRIVER=resvg',
             'rsvg-convert' => 'SVG_CONVERTER_DRIVER=rsvg-convert',
+            'cairosvg' => 'SVG_CONVERTER_DRIVER=cairosvg',
             default => '',
         };
 
