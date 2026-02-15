@@ -28,10 +28,10 @@ Visit the **[full documentation](https://laratusk.github.io/larasvg/)** for deta
 ```php
 use Laratusk\Larasvg\Facades\SvgConverter;
 
-SvgConverter::open('/path/to/file.svg')
+SvgConverter::open(resource_path('svg/file.svg'))
     ->setFormat('png')
     ->setDimensions(1024, 1024)
-    ->toFile('/path/to/output.png');
+    ->toFile(storage_path('app/output.png'));
 ```
 
 ## Contributing

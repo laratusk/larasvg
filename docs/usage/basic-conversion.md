@@ -4,10 +4,17 @@
 
 ### From a Local Path
 
+The `open()` method accepts an **absolute file path**. Use Laravel's path helpers to build the correct path:
+
 ```php
 use Laratusk\Larasvg\Facades\SvgConverter;
 
-$converter = SvgConverter::open('/path/to/file.svg');
+$converter = SvgConverter::open(resource_path('svg/file.svg'));
+
+// Other Laravel path helpers you can use:
+// storage_path('app/file.svg')
+// base_path('resources/svg/file.svg')
+// public_path('images/file.svg')
 ```
 
 ### From a Laravel Disk
@@ -47,16 +54,16 @@ If you call `setFormat()` with an unsupported format, a `SvgConverterException` 
 
 ```php
 // Auto-generate output path (saves next to input file)
-$path = SvgConverter::open('/path/to/file.svg')
+$path = SvgConverter::open(resource_path('svg/file.svg'))
     ->setFormat('png')
     ->convert();
-// => /path/to/file.png
+// => resources/svg/file.png
 
 // Specify output filename
-$path = SvgConverter::open('/path/to/file.svg')
+$path = SvgConverter::open(resource_path('svg/file.svg'))
     ->setFormat('png')
     ->convert('output.png');
-// => /path/to/output.png
+// => resources/svg/output.png
 ```
 
 ## Switching Providers
@@ -64,7 +71,7 @@ $path = SvgConverter::open('/path/to/file.svg')
 ```php
 // Use Inkscape for this call
 SvgConverter::using('inkscape')
-    ->open('/path/to/file.svg')
+    ->open(resource_path('svg/file.svg'))
     ->setFormat('pdf')
     ->convert();
 ```

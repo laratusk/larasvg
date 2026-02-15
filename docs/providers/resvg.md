@@ -13,10 +13,10 @@
 ```php
 use Laratusk\Larasvg\Facades\SvgConverter;
 
-SvgConverter::open('logo.svg')
+SvgConverter::open(resource_path('svg/logo.svg'))
     ->setFormat('png')
     ->setDimensions(512, 512)
-    ->toFile('logo.png');
+    ->toFile(storage_path('app/logo.png'));
 ```
 
 ## Resvg-Specific Methods
@@ -76,7 +76,7 @@ $converter->setDefaultFontSize(16);
 Use a specific font file:
 
 ```php
-$converter->useFontFile('/path/to/font.ttf');
+$converter->useFontFile(resource_path('fonts/font.ttf'));
 ```
 
 ### `useFontsDir()`
@@ -84,7 +84,7 @@ $converter->useFontFile('/path/to/font.ttf');
 Load fonts from a directory:
 
 ```php
-$converter->useFontsDir('/path/to/fonts');
+$converter->useFontsDir(resource_path('fonts'));
 ```
 
 ### `skipSystemFonts()`
@@ -100,13 +100,13 @@ $converter->skipSystemFonts();
 Set the directory for resolving relative image paths in SVG files:
 
 ```php
-$converter->setResourcesDir('/path/to/resources');
+$converter->setResourcesDir(resource_path('svg'));
 ```
 
 ## Full Example
 
 ```php
-SvgConverter::open('design.svg')
+SvgConverter::open(resource_path('svg/design.svg'))
     ->setFormat('png')
     ->setDimensions(2048, 2048, 300)
     ->setBackground('#ffffff')
@@ -115,5 +115,5 @@ SvgConverter::open('design.svg')
     ->setDefaultFontFamily('Inter')
     ->useFontsDir(resource_path('fonts'))
     ->skipSystemFonts()
-    ->toFile('design-hq.png');
+    ->toFile(storage_path('app/design-hq.png'));
 ```

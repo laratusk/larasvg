@@ -44,25 +44,25 @@ The default timeout is configured per provider in `config/svg-converter.php`.
 ## Example: Custom Resvg Options
 
 ```php
-SvgConverter::open('logo.svg')
+SvgConverter::open(resource_path('svg/logo.svg'))
     ->setFormat('png')
     ->setDimensions(1024, 1024)
     ->withOption('languages', 'en')
     ->withOption('shape-rendering', 'crispEdges')
     ->timeout(30)
-    ->toFile('logo.png');
+    ->toFile(storage_path('app/logo.png'));
 ```
 
 ## Example: Custom Inkscape Options
 
 ```php
 SvgConverter::using('inkscape')
-    ->open('design.svg')
+    ->open(resource_path('svg/design.svg'))
     ->setFormat('pdf')
     ->withOption('export-pdf-version', '1.5')
     ->withFlag('export-text-to-path')
     ->timeout(300)
-    ->toFile('design.pdf');
+    ->toFile(storage_path('app/design.pdf'));
 ```
 
 ::: tip

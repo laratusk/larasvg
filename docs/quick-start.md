@@ -6,20 +6,24 @@
 use Laratusk\Larasvg\Facades\SvgConverter;
 
 // SVG to PNG
-SvgConverter::open('/path/to/file.svg')
+SvgConverter::open(resource_path('svg/file.svg'))
     ->setFormat('png')
     ->setDimensions(1024, 1024)
-    ->toFile('/path/to/output.png');
+    ->toFile(storage_path('app/output.png'));
 ```
+
+::: tip
+The `open()` method accepts an **absolute file path**. Use Laravel's path helpers such as `resource_path()`, `storage_path()`, `base_path()`, or `public_path()` to build the correct path. The same applies to `toFile()`.
+:::
 
 ## Using Inkscape
 
 ```php
 // Switch provider for this call
 SvgConverter::using('inkscape')
-    ->open('/path/to/file.svg')
+    ->open(resource_path('svg/file.svg'))
     ->setFormat('pdf')
-    ->toFile('/path/to/output.pdf');
+    ->toFile(storage_path('app/output.pdf'));
 ```
 
 ## Auto-Generate Output Path
@@ -27,16 +31,16 @@ SvgConverter::using('inkscape')
 When you don't specify an output path, the converted file is saved next to the input file:
 
 ```php
-// Saves to /path/to/file.png
-$outputPath = SvgConverter::open('/path/to/file.svg')
+$outputPath = SvgConverter::open(resource_path('svg/file.svg'))
     ->setFormat('png')
     ->convert();
+// => resources/svg/file.png
 ```
 
 ## Save to Laravel Disk
 
 ```php
-SvgConverter::open('/path/to/file.svg')
+SvgConverter::open(resource_path('svg/file.svg'))
     ->toDisk('s3', 'exports/image.png');
 ```
 
