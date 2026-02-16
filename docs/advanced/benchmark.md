@@ -1,0 +1,114 @@
+# Benchmark
+
+LaraSVG ships with a `benchmark.php` script that measures throughput, latency, and peak memory usage for each provider.
+
+## Running the Benchmark
+
+```bash
+# Run all available drivers (up to 10,000 conversions or 60 s each)
+php benchmark.php
+
+# Run a single driver
+php benchmark.php resvg
+
+# Custom limits
+php benchmark.php --max=500 --time=30
+
+# Print results without writing benchmark.md
+php benchmark.php --no-write
+```
+
+The script auto-detects which providers are installed and skips any that are missing.
+
+## Results
+
+> SVG → PNG conversion, 200×200 px output.
+> Each driver is run for up to 10,000 conversions or 60 s, whichever comes first.
+> Peak RSS is the maximum resident set size of the converter binary for one conversion.
+
+**Date:** 2026-02-15
+**Platform:** Darwin (arm64), PHP 8.4.17
+
+### Summary
+
+| Driver | Version | Conversions | Throughput | Avg latency | p95 latency | Peak RSS |
+|--------|---------|-------------|------------|-------------|-------------|----------|
+| resvg | 0.47.0 | 6,474 | 107.9 / sec | 9.3 ms | 10.4 ms | 4.7 MB |
+| rsvg-convert | 2.61.4 | 1,766 | 29.4 / sec | 34.0 ms | 37.6 ms | 25.3 MB |
+| cairosvg | 2.8.2 | 489 | 8.1 / sec | 122.8 ms | 125.9 ms | 45.0 MB |
+| inkscape | 1.4.3 | 303 | 5.0 / sec | 198.3 ms | 210.2 ms | 129.7 MB |
+
+### Throughput Comparison
+
+```
+resvg           ████████████████████████████████████████ 107.9 / sec
+rsvg-convert    ███████████ 29.4 / sec
+cairosvg        ███ 8.1 / sec
+inkscape        ██ 5.0 / sec
+```
+
+### Per-Driver Detail
+
+#### resvg
+
+| Metric | Value |
+|--------|-------|
+| Conversions completed | 6,474 |
+| Total time | 60.0 s |
+| Throughput | 107.90 conversions/sec |
+| Avg latency | 9.3 ms |
+| Min latency | 8.4 ms |
+| p50 latency | 9.1 ms |
+| p95 latency | 10.4 ms |
+| Max latency | 40.5 ms |
+| Peak binary RSS | 4.7 MB |
+
+#### rsvg-convert
+
+| Metric | Value |
+|--------|-------|
+| Conversions completed | 1,766 |
+| Total time | 60.0 s |
+| Throughput | 29.43 conversions/sec |
+| Avg latency | 34.0 ms |
+| Min latency | 31.4 ms |
+| p50 latency | 33.3 ms |
+| p95 latency | 37.6 ms |
+| Max latency | 44.3 ms |
+| Peak binary RSS | 25.3 MB |
+
+#### cairosvg
+
+| Metric | Value |
+|--------|-------|
+| Conversions completed | 489 |
+| Total time | 60.1 s |
+| Throughput | 8.14 conversions/sec |
+| Avg latency | 122.8 ms |
+| Min latency | 120.3 ms |
+| p50 latency | 122.5 ms |
+| p95 latency | 125.9 ms |
+| Max latency | 135.5 ms |
+| Peak binary RSS | 45.0 MB |
+
+#### inkscape
+
+| Metric | Value |
+|--------|-------|
+| Conversions completed | 303 |
+| Total time | 60.1 s |
+| Throughput | 5.04 conversions/sec |
+| Avg latency | 198.3 ms |
+| Min latency | 192.6 ms |
+| p50 latency | 196.5 ms |
+| p95 latency | 210.2 ms |
+| Max latency | 216.5 ms |
+| Peak binary RSS | 129.7 MB |
+
+## Notes
+
+- Benchmark measures **wall-clock time** per conversion including process spawn overhead.
+- **Peak RSS** is sampled via `/usr/bin/time` for a single representative conversion and reflects the converter binary's own memory, not PHP.
+- First-run warmup is excluded from all measurements.
+- Results vary by machine load, SVG complexity, and binary version.
+- Inkscape and CairoSVG include interpreter startup cost per invocation. For high-throughput production use, consider daemon modes (Inkscape shell mode, CairoSVG server) to amortize startup costs.
