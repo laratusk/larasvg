@@ -70,6 +70,7 @@ export default defineConfig({
           { text: 'Testing', link: '/advanced/testing' },
           { text: 'Artisan Commands', link: '/advanced/artisan-commands' },
           { text: 'Custom Drivers', link: '/advanced/custom-drivers' },
+          { text: 'Benchmark', link: '/advanced/benchmark' },
         ],
       },
       {
