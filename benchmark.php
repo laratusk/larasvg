@@ -43,9 +43,9 @@ $args = $argv;
 array_shift($args); // remove script name
 
 $maxConversions = 10_000;
-$timeLimitSec   = 60;
-$writeResults   = true;
-$filterDriver   = null;
+$timeLimitSec = 60;
+$writeResults = true;
+$filterDriver = null;
 
 foreach ($args as $arg) {
     if (str_starts_with($arg, '--max=')) {
@@ -64,10 +64,10 @@ foreach ($args as $arg) {
 // ---------------------------------------------------------------------------
 
 $allProviders = [
-    'resvg'        => ['class' => ResvgConverter::class,       'binary' => 'resvg'],
-    'inkscape'     => ['class' => InkscapeConverter::class,    'binary' => 'inkscape'],
+    'resvg' => ['class' => ResvgConverter::class,       'binary' => 'resvg'],
+    'inkscape' => ['class' => InkscapeConverter::class,    'binary' => 'inkscape'],
     'rsvg-convert' => ['class' => RsvgConvertConverter::class, 'binary' => 'rsvg-convert'],
-    'cairosvg'     => ['class' => CairosvgConverter::class,    'binary' => 'cairosvg'],
+    'cairosvg' => ['class' => CairosvgConverter::class,    'binary' => 'cairosvg'],
 ];
 
 if ($filterDriver !== null) {
@@ -120,13 +120,13 @@ function commandExists(string $binary): bool
  */
 function measurePeakRssMB(string $command): ?float
 {
-    $isMac   = PHP_OS_FAMILY === 'Darwin';
+    $isMac = PHP_OS_FAMILY === 'Darwin';
     $isLinux = PHP_OS_FAMILY === 'Linux';
 
     if ($isMac) {
         // macOS: /usr/bin/time -l prints peak RSS in bytes to stderr
         $timeCmd = '/usr/bin/time -l '.$command.' 2>&1 >/dev/null';
-        $output  = (string) shell_exec($timeCmd);
+        $output = (string) shell_exec($timeCmd);
 
         // "   12345678  maximum resident set size"
         if (preg_match('/(\d+)\s+maximum resident set size/', $output, $m)) {
@@ -135,7 +135,7 @@ function measurePeakRssMB(string $command): ?float
     } elseif ($isLinux) {
         // Linux: /usr/bin/time -v prints peak RSS in kbytes to stderr
         $timeCmd = '/usr/bin/time -v '.$command.' 2>&1 >/dev/null';
-        $output  = (string) shell_exec($timeCmd);
+        $output = (string) shell_exec($timeCmd);
 
         // "	Maximum resident set size (kbytes): 12345"
         if (preg_match('/Maximum resident set size \(kbytes\):\s*(\d+)/', $output, $m)) {
@@ -158,7 +158,7 @@ function formatMb(float $mb): string
 
 function bar(float $value, float $max, int $width = 20): string
 {
-    $fill  = $max > 0 ? (int) round(($value / $max) * $width) : 0;
+    $fill = $max > 0 ? (int) round(($value / $max) * $width) : 0;
     $empty = $width - $fill;
 
     return '['.str_repeat('#', $fill).str_repeat('-', $empty).']';
@@ -171,15 +171,15 @@ function bar(float $value, float $max, int $width = 20): string
 echo "\n";
 echo "LaraSVG Benchmark\n";
 echo str_repeat('═', 60)."\n";
-echo "Max conversions : ".number_format($maxConversions)."\n";
+echo 'Max conversions : '.number_format($maxConversions)."\n";
 echo "Time limit      : {$timeLimitSec}s per driver\n";
 echo "Output size     : 200×200 px PNG\n";
-echo "Platform        : ".PHP_OS_FAMILY.' ('.php_uname('m').")\n";
-echo "PHP             : ".PHP_VERSION."\n";
+echo 'Platform        : '.PHP_OS_FAMILY.' ('.php_uname('m').")\n";
+echo 'PHP             : '.PHP_VERSION."\n";
 echo str_repeat('─', 60)."\n\n";
 
 $benchmarkDate = date('Y-m-d H:i:s');
-$results       = [];
+$results = [];
 
 foreach ($allProviders as $name => ['class' => $class, 'binary' => $binary]) {
     echo "  [{$name}]";
@@ -205,7 +205,7 @@ foreach ($allProviders as $name => ['class' => $class, 'binary' => $binary]) {
     echo " v{$version}\n";
 
     // Warmup (first run is always slower due to OS page faults / disk cache)
-    echo "    Warmup...";
+    echo '    Warmup...';
 
     try {
         (new $class($tempSvg, $binary, 60))
@@ -221,7 +221,7 @@ foreach ($allProviders as $name => ['class' => $class, 'binary' => $binary]) {
     }
 
     // Measure binary peak RSS via /usr/bin/time on a probe instance
-    echo "    Probing RSS...";
+    echo '    Probing RSS...';
     $rssMB = null;
 
     try {
@@ -230,7 +230,7 @@ foreach ($allProviders as $name => ['class' => $class, 'binary' => $binary]) {
         $probe->setFormat('png')->setDimensions(200, 200);
         // toFile sets up applyExportOptions internally, then we can read buildCommand()
         $probe->toFile($outputPng);
-        $cmd   = $probe->buildCommand();
+        $cmd = $probe->buildCommand();
         $rssMB = measurePeakRssMB($cmd);
         echo $rssMB !== null ? ' '.formatMb($rssMB)."\n" : " n/a\n";
     } catch (\Throwable $e) {
@@ -238,11 +238,11 @@ foreach ($allProviders as $name => ['class' => $class, 'binary' => $binary]) {
     }
 
     // Throughput benchmark
-    echo "    Running benchmark";
+    echo '    Running benchmark';
 
-    $times    = [];
-    $errors   = 0;
-    $start    = microtime(true);
+    $times = [];
+    $errors = 0;
+    $start = microtime(true);
 
     while (count($times) < $maxConversions) {
         $elapsed = microtime(true) - $start;
@@ -275,7 +275,7 @@ foreach ($allProviders as $name => ['class' => $class, 'binary' => $binary]) {
 
     echo "\n";
 
-    $done      = count($times);
+    $done = count($times);
     $totalTime = microtime(true) - $start;
 
     if ($done === 0) {
@@ -286,12 +286,12 @@ foreach ($allProviders as $name => ['class' => $class, 'binary' => $binary]) {
     }
 
     sort($times);
-    $avgMs    = (array_sum($times) / $done) * 1000;
-    $minMs    = $times[0] * 1000;
-    $maxMs    = $times[$done - 1] * 1000;
-    $p50Ms    = $times[(int) ($done * 0.5)] * 1000;
-    $p95Ms    = $times[(int) ($done * 0.95)] * 1000;
-    $perSec   = $done / $totalTime;
+    $avgMs = (array_sum($times) / $done) * 1000;
+    $minMs = $times[0] * 1000;
+    $maxMs = $times[$done - 1] * 1000;
+    $p50Ms = $times[(int) ($done * 0.5)] * 1000;
+    $p95Ms = $times[(int) ($done * 0.95)] * 1000;
+    $perSec = $done / $totalTime;
     $hitLimit = $done >= $maxConversions ? 'max conversions reached' : "time limit ({$timeLimitSec}s) reached";
 
     printf("    Conversions : %s in %.1fs (%s)\n", number_format($done), $totalTime, $hitLimit);
@@ -307,19 +307,19 @@ foreach ($allProviders as $name => ['class' => $class, 'binary' => $binary]) {
     echo "\n";
 
     $results[$name] = [
-        'status'    => 'ok',
-        'version'   => $version,
-        'done'      => $done,
+        'status' => 'ok',
+        'version' => $version,
+        'done' => $done,
         'totalTime' => $totalTime,
-        'perSec'    => $perSec,
-        'avgMs'     => $avgMs,
-        'minMs'     => $minMs,
-        'maxMs'     => $maxMs,
-        'p50Ms'     => $p50Ms,
-        'p95Ms'     => $p95Ms,
-        'rssMB'     => $rssMB,
-        'hitLimit'  => $hitLimit,
-        'errors'    => $errors,
+        'perSec' => $perSec,
+        'avgMs' => $avgMs,
+        'minMs' => $minMs,
+        'maxMs' => $maxMs,
+        'p50Ms' => $p50Ms,
+        'p95Ms' => $p95Ms,
+        'rssMB' => $rssMB,
+        'hitLimit' => $hitLimit,
+        'errors' => $errors,
     ];
 }
 
@@ -345,10 +345,10 @@ echo "Results written to benchmark.md\n\n";
 // ---------------------------------------------------------------------------
 
 function generateMarkdown(
-    array  $results,
+    array $results,
     string $date,
-    int    $maxConversions,
-    int    $timeLimitSec,
+    int $maxConversions,
+    int $timeLimitSec,
 ): string {
     $platform = PHP_OS_FAMILY.' ('.php_uname('m').') PHP '.PHP_VERSION;
 
@@ -377,12 +377,12 @@ function generateMarkdown(
             continue;
         }
 
-        $done    = number_format($r['done']);
-        $perSec  = number_format($r['perSec'], 1).' / sec';
-        $avg     = number_format($r['avgMs'], 1).' ms';
-        $p95     = number_format($r['p95Ms'], 1).' ms';
-        $rss     = $r['rssMB'] !== null ? number_format($r['rssMB'], 1).' MB' : 'n/a';
-        $ver     = $r['version'];
+        $done = number_format($r['done']);
+        $perSec = number_format($r['perSec'], 1).' / sec';
+        $avg = number_format($r['avgMs'], 1).' ms';
+        $p95 = number_format($r['p95Ms'], 1).' ms';
+        $rss = $r['rssMB'] !== null ? number_format($r['rssMB'], 1).' MB' : 'n/a';
+        $ver = strtok($r['version'], "\n"); // first line only
 
         $lines[] = "| {$name} | {$ver} | {$done} | {$perSec} | {$avg} | {$p95} | {$rss} |";
     }
@@ -411,7 +411,8 @@ function generateMarkdown(
             continue;
         }
 
-        $lines[] = "**Version:** {$r['version']}  ";
+        $ver1 = strtok($r['version'], "\n");
+        $lines[] = "**Version:** {$ver1}  ";
         $lines[] = "**Result:** {$r['hitLimit']}  ";
         if ($r['errors'] > 0) {
             $lines[] = "**Errors:** {$r['errors']}  ";
@@ -442,9 +443,10 @@ function generateMarkdown(
         $lines[] = '```';
 
         foreach ($okResults as $name => $r) {
-            $bar   = str_pad('', (int) round(($r['perSec'] / $maxPerSec) * 40), '█');
+            $barLen = (int) round(($r['perSec'] / $maxPerSec) * 40);
+            $bar = str_repeat('█', $barLen);
             $label = str_pad($name, 15);
-            $val   = number_format($r['perSec'], 1);
+            $val = number_format($r['perSec'], 1);
             $lines[] = "{$label} {$bar} {$val} / sec";
         }
 
